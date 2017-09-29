@@ -1,0 +1,241 @@
+﻿REM  *****  BASIC  *****
+
+Sub Main
+ MsgBox (" empty tags were replaced!")
+ 
+End Sub
+
+
+sub test1
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService("com.sun.star.frame.DispatchHelper")
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = "Count"
+args1(0).Value = 1
+args1(1).Name = "Select"
+args1(1).Value = false
+
+dispatcher.executeDispatch(document, ".uno:GoDown", "", 0, args1())
+
+rem ----------------------------------------------------------------------
+rem dispatcher.executeDispatch(document, ".uno:GoToEndOfDoc", "", 0, Array())
+
+rem ----------------------------------------------------------------------
+rem dispatcher.executeDispatch(document, ".uno:GoToStartOfDoc", "", 0, Array())
+
+rem ----------------------------------------------------------------------
+rem dispatcher.executeDispatch(document, ".uno:EndOfLineSel", "", 0, Array())
+
+rem ----------------------------------------------------------------------
+dim args5(1) as new com.sun.star.beans.PropertyValue
+args5(0).Name = "Count"
+args5(0).Value = 1
+args5(1).Name = "Select"
+args5(1).Value = false
+
+dispatcher.executeDispatch(document, ".uno:GoDown", "", 0, args5())
+
+rem ----------------------------------------------------------------------
+dispatcher.executeDispatch(document, ".uno:GoToEndOfLine", "", 0, Array())
+
+rem ----------------------------------------------------------------------
+dim args7(1) as new com.sun.star.beans.PropertyValue
+args7(0).Name = "Count"
+args7(0).Value = 1
+args7(1).Name = "Select"
+args7(1).Value = true
+
+dispatcher.executeDispatch(document, ".uno:GoLeft", "", 0, args7())
+
+rem ----------------------------------------------------------------------
+dim args8(1) as new com.sun.star.beans.PropertyValue
+args8(0).Name = "Count"
+args8(0).Value = 1
+args8(1).Name = "Select"
+args8(1).Value = true
+
+dispatcher.executeDispatch(document, ".uno:GoLeft", "", 0, args8())
+
+rem ----------------------------------------------------------------------
+dim args9(0) as new com.sun.star.beans.PropertyValue
+args9(0).Name = "Color"
+args9(0).Value = 16724787
+
+dispatcher.executeDispatch(document, ".uno:Color", "", 0, args9())
+
+
+end sub
+
+sub test2
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+dim oDoc as object 
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService("com.sun.star.frame.DispatchHelper")
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = "Count"
+args1(0).Value = 1
+args1(1).Name = "Select"
+args1(1).Value = false
+
+rem doesn't work with paragraph sings
+dispatcher.executeDispatch(document, ".uno:GoDown", "", 0, args1())
+
+rem ----------------------------------------------------------------------
+dispatcher.executeDispatch(document, ".uno:GoToEndOfLine", "", 0, Array())
+
+rem ----------------------------------------------------------------------
+dim args7(1) as new com.sun.star.beans.PropertyValue
+args7(0).Name = "Count"
+args7(0).Value = 1
+args7(1).Name = "Select"
+args7(1).Value = true
+
+dispatcher.executeDispatch(document, ".uno:GoLeft", "", 0, args7())
+oDoc = ThisComponent
+if IsAnythingSelected(oDoc) then
+	msgbox "Selection is not empty"
+	rem ----------------------------------------------------------------------
+	dim args9(0) as new com.sun.star.beans.PropertyValue
+	args9(0).Name = "Color"
+	args9(0).Value = 16724787
+	
+	dispatcher.executeDispatch(document, ".uno:Color", "", 0, args9())
+else 
+	msbbox "empty selection"
+endif
+rem ----------------------------------------------------------------------
+' dispatcher.executeDispatch(document, ".uno:GoToStartOfLine", "", 0, Array())
+
+
+end sub
+
+sub traverse_lines
+	rem ----------------------------------------------------------------------
+	rem define variables
+	dim document   as object
+	dim dispatcher as object
+	rem ----------------------------------------------------------------------
+	rem get access to the document
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService("com.sun.star.frame.DispatchHelper")
+	
+	rem ----------------------------------------------------------------------
+	dim args1(1) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = "Count"
+	args1(0).Value = 1
+	args1(1).Name = "Select"
+	args1(1).Value = false
+	
+	rem doesn't work with paragraph sings
+	dispatcher.executeDispatch(document, ".uno:GoDown", "", 0, args1())
+	
+end sub
+rem -----------------------------------------------------------------------
+Function IsAnythingSelected(oDoc As Object) As Boolean
+  Dim oSels  'All of the selections
+  Dim oSel         'A single selection
+  Dim oCursor      'A temporary cursor
+  
+  IsAnythingSelected = False
+  If IsNull(oDoc) Then Exit Function
+  ' The current selection in the current controller. 
+  'If there is no current controller, it returns NULL.
+  oSels = oDoc.getCurrentSelection()
+  If IsNull(oSels) Then Exit Function
+
+  REM I have never seen a selection count of zero
+  If oSels.getCount() = 0 Then Exit Function
+
+  REM If there are multiple selections, then assume 
+  REM something is selected
+  If oSels.getCount() > 1 Then 
+    IsAnythingSelected = True
+  Else
+    REM If only one thing is selected, however, then check to see 
+    REM if the selection is collapsed. In other words, see if the 
+    REM end location is the same as the starting location.
+    REM Notice that I use the text object from the selection object
+    REM because it is safer than assuming that it is the same as the
+    REM documents text object.
+    oSel = oSels.getByIndex(0)
+    oCursor = oSel.getText().CreateTextCursorByRange(oSel)
+    If Not oCursor.IsCollapsed() Then IsAnythingSelected = True
+  End If
+End Function 
+
+sub ScrollDownOneScreen
+	ThisComponent.currentController.getViewCursor().screenDown()
+end sub
+
+sub OneLineDown
+	ThisComponent.currentController.getViewCursor().goDown(1, false)
+	ThisComponent.currentController.getViewCursor().gotoendofline(true)
+	ThisComponent.currentController.getViewCursor().goLeft(1, true)
+	if isNewLine() then
+			ThisComponent.currentController.getViewCursor().goDown(1, false)
+	endif
+end sub
+
+Sub PrintMultipleTextSelection
+	Dim oSelections
+	'Contains all of the selections
+	Dim oSel
+	'Contains one specific selection
+	Dim lWhichSelection As Long
+	'Which selection to print
+	If NOT IsAnythingSelected (ThisComponent) Then
+		Print "Nothing is selected"
+	Else
+		oSelections = ThisComponent.getCurrentSelection()
+		if oSelections.getCount() >1 then	
+		For lWhichSelection=0 To oSelections.getCount()-1
+			oSel=oSelections.getByIndex(lWhichSelection)
+			MsgBox oSel.getString(),0, "Selection " & lWhichSelection 
+		Next
+		else
+			oSel=oSelections.getByIndex(0)
+			msgbox "only one selection"
+		endif
+	EndIf
+End Sub
+
+rem ---------------------------------------------------------------------------------------------------------------
+function isNewLine() as Boolean
+	Dim oSelections
+	'Contains all of the selections
+	Dim oSel
+	'Contains one specific selection
+	Dim lWhichSelection As Long
+	'Which selection to print
+	If NOT IsAnythingSelected (ThisComponent) Then
+		Print "Nothing is selected"
+	Else
+		oSelections = ThisComponent.getCurrentSelection()
+		if oSelections.getCount() >1 then	
+			print "multiple selection detected"
+		else
+			oSel=oSelections.getByIndex(0)
+			if oSel.getString() = CHR$(10) or oSel.getString() = CHR$(13) then			
+				isNewLine = true
+				msgbox "line is empty"
+				exit function
+			endif
+		endif
+	EndIf
+	isNewLine= false
+End function
