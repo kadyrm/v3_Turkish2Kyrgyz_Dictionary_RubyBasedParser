@@ -124,7 +124,7 @@ rem ----------------------------------------------------------------------
 
 end sub
 
-sub traverse_lines
+sub traverse_lines_obsolete
 	rem ----------------------------------------------------------------------
 	rem define variables
 	dim document   as object
@@ -174,7 +174,9 @@ Function IsAnythingSelected(oDoc As Object) As Boolean
     REM documents text object.
     oSel = oSels.getByIndex(0)
     oCursor = oSel.getText().CreateTextCursorByRange(oSel)
-    If Not oCursor.IsCollapsed() Then IsAnythingSelected = True
+    If Not oCursor.IsCollapsed() Then 
+    	IsAnythingSelected = True
+    end if
   End If
 End Function 
 
@@ -182,15 +184,35 @@ sub ScrollDownOneScreen
 	ThisComponent.currentController.getViewCursor().screenDown()
 end sub
 
-sub OneLineDown
-	ThisComponent.currentController.getViewCursor().goDown(1, false)
-	ThisComponent.currentController.getViewCursor().gotoendofline(true)
-	ThisComponent.currentController.getViewCursor().goLeft(1, true)
-	if isNewLine() then
-			ThisComponent.currentController.getViewCursor().goDown(1, false)
+
+rem ---------------------------------------------------------------------------------------------------------------
+sub LineEndCharColoring
+rem  Reach the end of line and paint the last character in red 
+rem  
+
+	Cursor = ThisComponent.currentController.getViewCursor()
+
+	if isLineEmpty() then
+		exit sub
+	endif
+	Cursor.gotoendofline(false)
+	Cursor.goLeft(1, true)
+	if Cursor.getString() = " " then
+		rem----line end
+		Cursor.goLeft(1, true)
+		Cursor.CharColor = 16724787
+	else
+		rem----paragraph end
+		Cursor.CharColor = 16724787
 	endif
 end sub
+rem ---------------------------------------------------------------------------------------------------------------
 
+sub LinesEndCharColoring
+
+end sub
+
+rem ---------------------------------------------------------------------------------------------------------------
 Sub PrintMultipleTextSelection
 	Dim oSelections
 	'Contains all of the selections
@@ -215,13 +237,16 @@ Sub PrintMultipleTextSelection
 End Sub
 
 rem ---------------------------------------------------------------------------------------------------------------
-function isNewLine() as Boolean
+function isLineEmpty() as Boolean
 	Dim oSelections
 	'Contains all of the selections
 	Dim oSel
 	'Contains one specific selection
 	Dim lWhichSelection As Long
 	'Which selection to print
+	Cursor = ThisComponent.currentController.getViewCursor()
+	Cursor.gotostartofline(false)
+	Cursor.gotoendofline(true)
 	If NOT IsAnythingSelected (ThisComponent) Then
 		Print "Nothing is selected"
 	Else
@@ -231,11 +256,28 @@ function isNewLine() as Boolean
 		else
 			oSel=oSelections.getByIndex(0)
 			if oSel.getString() = CHR$(10) or oSel.getString() = CHR$(13) then			
-				isNewLine = true
+				isLineEmpty = true
 				msgbox "line is empty"
 				exit function
 			endif
 		endif
 	EndIf
-	isNewLine= false
+	isLineEmpty= false
+	Cursor.CollapseToStart()
 End function
+rem ---------------------------------------------------------------------------------------------------------------
+sub Format1stWordOfSentences
+	Dim Doc As Object   
+	Dim Cursor As Object
+	Dim Proceed As Boolean
+	 
+	Doc = ThisComponent
+	Cursor = Doc.Text.createTextCursor
+	 
+	Do 
+	  Cursor.gotoEndOfWord(True)
+	  Cursor.CharWeight = com.sun.star.awt.FontWeight.BOLD
+	  Proceed = Cursor.gotoNextSentence(False)
+	  Cursor.gotoNextWord(False)
+	Loop While Proceed
+end sub
