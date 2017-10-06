@@ -196,19 +196,34 @@ rem
 		exit sub
 	endif
 	Cursor.gotoendofline(false)
-	Cursor.goLeft(1, true)
-	if Cursor.getString() = " " then
-		rem----line end
+	Cursor.goright(1, true)
+	if Cursor.getString() = chr$(10) then
+		rem----new paragraph goes next
+		Cursor.collapsetostart()
 		Cursor.goLeft(1, true)
 		Cursor.CharColor = 16724787
 	else
-		rem----paragraph end
+		rem----new line goes next
+		Cursor.collapsetostart()
+		cursor.goleft(1, false)
+		cursor.goleft(1, true)
 		Cursor.CharColor = 16724787
 	endif
 end sub
 rem ---------------------------------------------------------------------------------------------------------------
 
 sub LinesEndCharColoring
+	
+	
+	dim oCursor rem 
+	dim i as integer 
+	oCursor = ThisComponent.currentController.getViewCursor()
+	i=0
+	Do 
+		call "LineEndCharColoring"	  
+		i=i+1
+	Loop While oCursor.goDown(1, false) and i<100
+
 
 end sub
 
@@ -248,7 +263,9 @@ function isLineEmpty() as Boolean
 	Cursor.gotostartofline(false)
 	Cursor.gotoendofline(true)
 	If NOT IsAnythingSelected (ThisComponent) Then
-		Print "Nothing is selected"
+		Print "Empty Paragraph"
+		isLineEmpty = true
+		exit function
 	Else
 		oSelections = ThisComponent.getCurrentSelection()
 		if oSelections.getCount() >1 then	
