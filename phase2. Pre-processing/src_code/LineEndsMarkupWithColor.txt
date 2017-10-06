@@ -222,7 +222,7 @@ sub LinesEndCharColoring
 	Do 
 		call "LineEndCharColoring"	  
 		i=i+1
-	Loop While oCursor.goDown(1, false) and i<100
+	Loop While oCursor.goDown(1, false) and i<1000000
 
 
 end sub
@@ -263,7 +263,7 @@ function isLineEmpty() as Boolean
 	Cursor.gotostartofline(false)
 	Cursor.gotoendofline(true)
 	If NOT IsAnythingSelected (ThisComponent) Then
-		Print "Empty Paragraph"
+		'Print "Empty Paragraph"
 		isLineEmpty = true
 		exit function
 	Else
