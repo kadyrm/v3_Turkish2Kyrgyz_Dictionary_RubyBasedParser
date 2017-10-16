@@ -1,17 +1,22 @@
 require 'nokogiri'
 require 'open-uri'
 
+# creating io object
 html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 
-nokogiri_object = Nokogiri::HTML(html_data)
+# creating DOM object from io object
+oDOM = Nokogiri::HTML(html_data)
 
-x_element = nokogiri_object.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+x_element.each() do |i|
+	i.add_next_sibling "<br>"
+end
 
 # output below doesn't preserve turkish and kyrgyz specific letter
-nokogiri_object.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
 # output below doesn't preserve content text at all
-#File.write('../output/write_html_to.html', nokogiri_object.to_html(encoding: 'UTF-8'))
+#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
 
 
 
