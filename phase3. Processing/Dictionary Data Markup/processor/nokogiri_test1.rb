@@ -7,9 +7,16 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
-x_element.each() do |i|
-	i.add_next_sibling "<br>"
+x_element = oDOM.xpath("/html/body/div")
+x_element.each() do |node|
+	#i.add_next_sibling "<br>"
+	i =  x_element.index(node)
+	# i= n-1
+	if (i+1)%4 == 0
+		puts i+1
+		node["class"]="DictData"
+		puts node.attribute("class")
+	end
 end
 
 # output below doesn't preserve turkish and kyrgyz specific letter
