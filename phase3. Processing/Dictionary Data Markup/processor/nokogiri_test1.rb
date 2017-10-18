@@ -2,12 +2,12 @@ require 'nokogiri'
 require 'open-uri'
 
 def DelimitLines(oDOM)
-x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
-	x_element.each() do |i|
-		i.add_next_sibling "<br>"
-	end
+        x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+	        x_element.each() do |i|
+		        i.add_next_sibling "<br>"
+	        end
 end
-
+#==========================================================================
 def MarkupDictData(oDOM)
 	x_element = oDOM.xpath("/html/body/div")
 	x_element.each() do |node|
@@ -19,17 +19,29 @@ def MarkupDictData(oDOM)
 			node["class"]="DictData"
 			puts node.attribute("class")
 		end
+        end
+end
+#==========================================================================
+def MarkupColumns(o_div)
+        puts o_div.to_s()
+	p_elems = o_div.xpath("./p")
+	p_elems.each() do |node|
+                puts p_elems.index(node) +1
+                #puts node.to_html()
+		puts node.attribute("style")
+	end
 
 end
-
-end
+#==========================================================================
+# Main
 # creating io object
 html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-MarkupDictData(oDOM)
+div_set = oDOM.xpath("/html/body/div")
+MarkupColumns(div_set[3])
 
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
