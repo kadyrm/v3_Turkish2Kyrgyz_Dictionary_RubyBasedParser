@@ -92,12 +92,12 @@ def test_getLine(_oDOM)
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
-x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
-	x_element.each() do |i|
-		i.add_next_sibling "<br>"
-	end
+        x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+	        x_element.each() do |i|
+		        i.add_next_sibling "<br>"
+	        end
 end
-
+#==========================================================================
 def MarkupDictData(oDOM)
 	x_element = oDOM.xpath("/html/body/div")
 	x_element.each() do |node|
@@ -109,10 +109,20 @@ def MarkupDictData(oDOM)
 			node["class"]="DictData"
 			puts node.attribute("class")
 		end
+        end
+end
+#==========================================================================
+def MarkupColumns(o_div)
+        puts o_div.to_s()
+	p_elems = o_div.xpath("./p")
+	p_elems.each() do |node|
+                puts p_elems.index(node) +1
+                #puts node.to_html()
+		puts node.attribute("style")
+	end
 
 end
 
-end
 ######################################################################
 # MAIN FUNCTION
 	# input	
@@ -122,6 +132,7 @@ end
 	# creating DOM object from input object
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
+
 
 	test_nested_spans_fix(oDOM)
 
