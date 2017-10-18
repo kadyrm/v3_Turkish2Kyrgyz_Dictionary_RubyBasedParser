@@ -1,5 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
+require 'nokogiri-styles'
+
 #**************************************************************************
 def enable_style_tag(_oDOM)
 	node = _oDOM.at_xpath("/html/head/style")
@@ -113,28 +115,57 @@ def MarkupDictData(oDOM)
 end
 #==========================================================================
 def MarkupColumns(o_div)
-        puts o_div.to_s()
+        #puts o_div.to_s()
 	p_elems = o_div.xpath("./p")
 	p_elems.each() do |node|
-                puts p_elems.index(node) +1
-                #puts node.to_html()
-		puts node.attribute("style")
+                puts "element: " + (p_elems.index(node) +1).to_s()                  
+		#puts node["style"]
+		puts "margin-top:\t" + node.styles['margin-top'].to_s()
+		if node.styles['margin-top']== "4.1pt"
+			puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
+		end
 	end
 
 end
 
-######################################################################
-# MAIN FUNCTION
-	# input	
-	# creating input object
-	html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
-	# end
-	# creating DOM object from input object
-	oDOM = Nokogiri::HTML(html_data)
-	# some testing
+def ParsingOfAttrValues(_oDOM)
 
+	node = _oDOM.xpath("/html/body/div[3]/p[0]")
+	# ...
 
-	test_nested_spans_fix(oDOM)
+	# Get styles
+	node['style']         # => 'width: 400px; color: blue'
+	node.styles['width']  # => '400px'
+	node.styles['color']  # => 'blue'
+
+	# Update styles
+	style = node.styles
+	style['width']  = '500px'
+	style['height'] = '300px'
+	style['color']  = nil
+	node.styles = style
+	node['style']         # => 'width: 500xp; height: 300px'
+
+	# Modify classes
+	node['class']         # => 'foo bar'
+	node.classes          # => ['foo', 'bar']
+	node.classes = ['foo']
+	node['class']         # => 'foo'
+
+end
+#==========================================================================
+# Main
+# creating io object
+html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
+
+# creating DOM object from io object
+oDOM = Nokogiri::HTML(html_data)
+
+div_set = oDOM.xpath("/html/body/div")
+MarkupColumns(div_set[3])
+puts "\n NEXT PAGE GOES HERE========================================="
+MarkupColumns(div_set[7])
+test_nested_spans_fix(oDOM)
 
 	# end
 	# output 
