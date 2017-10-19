@@ -34,23 +34,23 @@ def MarkupColumns(o_div)
 	o_div.to_html()
 	flag = 0
 	p_elems.each() do |node|
-		if p_elems.index(node) == 0 
-			node.parent = leftColumn
-			o_div.to_html()			 
-		else 
-			if node.styles['margin-top']== "4.1pt"
-				flag+=1 
-				puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
-			end
-			if flag == 1
-				node.parent = rightColumn
-				o_div.to_html()
-			else
-				node.parent = leftColumn
-				o_div.to_html()			
-			end
+		if  node.styles['margin-top']== "4.1pt" 		
+			flag+=1 
+			puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
 		end
-	        puts "element: " + (p_elems.index(node) +1).to_s()              			
+		if flag == 1
+			node.parent = leftColumn			
+			puts "placed to leftColumn"
+		end
+		if flag == 2
+			node.parent = rightColumn
+			puts "placed to rightColumn"
+		else 	if flag > 2
+			
+			puts "*************************Error: " + flag.to_s()
+			end			
+		end		
+	        puts "element reached: " + (p_elems.index(node) +1).to_s()              			
 		puts "margin-top:\t" + node.styles['margin-top'].to_s()
 
 	end
