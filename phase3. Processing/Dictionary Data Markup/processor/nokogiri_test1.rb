@@ -115,17 +115,37 @@ def MarkupDictData(oDOM)
 end
 #==========================================================================
 def MarkupColumns(o_div)
-        #puts o_div.to_s()
-	p_elems = o_div.xpath("./p")
+	p_elems = o_div.children()# select everything inside div
+	first_p = p_elems[0]
+	first_p.add_previous_sibling "<div class = 'LeftColumn'/>"
+	first_p.add_previous_sibling "<div class = 'RightColumn' style = 'margin-left:150'/>"
+	o_div.to_html()
+	rightColumn = first_p.previous_sibling
+	leftColumn = rightColumn.previous_sibling
+	o_div.to_html()
+	flag = 0
 	p_elems.each() do |node|
-                puts "element: " + (p_elems.index(node) +1).to_s()                  
-		#puts node["style"]
-		puts "margin-top:\t" + node.styles['margin-top'].to_s()
-		if node.styles['margin-top']== "4.1pt"
-			puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
+		if p_elems.index(node) == 0 
+			node.parent = leftColumn
+			o_div.to_html()			 
+		else 
+			if node.styles['margin-top']== "4.1pt"
+				flag+=1 
+				puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
+			end
+			if flag == 1
+				node.parent = rightColumn
+				o_div.to_html()
+			else
+				node.parent = leftColumn
+				o_div.to_html()			
+			end
 		end
-	end
+	        puts "element: " + (p_elems.index(node) +1).to_s()              			
+		puts "margin-top:\t" + node.styles['margin-top'].to_s()
 
+	end
+	#leftColumn.next_sibling = rightColumn
 end
 
 def ParsingOfAttrValues(_oDOM)
@@ -162,15 +182,19 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 oDOM = Nokogiri::HTML(html_data)
 
 div_set = oDOM.xpath("/html/body/div")
+
 MarkupColumns(div_set[3])
 puts "\n NEXT PAGE GOES HERE========================================="
-MarkupColumns(div_set[7])
-test_nested_spans_fix(oDOM)
 
-	# end
-	# output 
-	# doesn't preserve turkish and kyrgyz specific letter
-	#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+#MarkupColumns(div_set[7])
+
+# output below doesn't preserve turkish and kyrgyz specific letter
+#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+
+# output below doesn't preserve content text at all
+File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
+
+
 
 	# output below doesn't preserve content text at all
 	#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
