@@ -125,7 +125,7 @@ def MarkupColumns(o_div)
 	o_div.to_html()
 	flag = 0
 	p_elems.each() do |node|
-		if  node.styles['margin-top']== "4.1pt" 		
+		if  node.styles['margin-top'].to_s.delete("pt").delete("in").to_f> 3 		
 			flag+=1 
 			puts "++++++++++++++++++++COLUMN BREAK HAS BEEN FOUND++++++++++++++++++++++++++++"		
 		end
@@ -137,13 +137,17 @@ def MarkupColumns(o_div)
 			node.parent = rightColumn
 			puts "placed to rightColumn"
 		else 	if flag > 2
-			
+			throw "Error: Too many columns in one page"
 			puts "*************************Error: " + flag.to_s()
 			end			
 		end		
-	        puts "element reached: " + (p_elems.index(node) +1).to_s()              			
-		puts "margin-top:\t" + node.styles['margin-top'].to_s()
-
+	        puts "Token reached: " + (p_elems.index(node) +1).to_s()              			
+		if node.styles['margin-top'].to_s == "" then
+			puts "margin-top:\tnil"
+		else 
+			#puts "\tmargin-top:\t" + node.styles['margin-top'].to_s().delete("pt").delete("in")
+			puts "\tmargin-top:\t" + node.styles['margin-top'].to_s()
+		end
 	end
 	#leftColumn.next_sibling = rightColumn
 end
@@ -186,13 +190,14 @@ div_set = oDOM.xpath("/html/body/div")
 MarkupColumns(div_set[3])
 puts "\n NEXT PAGE GOES HERE========================================="
 
-#MarkupColumns(div_set[7])
+MarkupColumns(div_set[7])
 
-# output below doesn't preserve turkish and kyrgyz specific letter
-#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
-# output below doesn't preserve content text at all
-File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
+# Output1: doesn't preserve turkish and kyrgyz specific letter
+oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+
+# Output2: below doesn't preserve content text at all
+#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
 
 
 
