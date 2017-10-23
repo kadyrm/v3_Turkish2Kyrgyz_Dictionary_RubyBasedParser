@@ -107,9 +107,9 @@ def MarkupDictData(oDOM)
 		i =  x_element.index(node)
 		# i= n-1
 		if (i+1)%4 == 0
-			puts i+1
+			puts "Div Token: " + (i+1).to_s
 			node["class"]="DictData"
-			puts node.attribute("class")
+			puts "Set class name to: " +  node.attribute("class").to_s
 		end
         end
 end
@@ -185,12 +185,14 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-div_set = oDOM.xpath("/html/body/div")
 
-MarkupColumns(div_set[3])
+MarkupDictData(oDOM)
+dicDataPages = oDOM.xpath("/html/body/div[@class = 'DictData']")
+MarkupColumns(dicDataPages[0])
 puts "\n NEXT PAGE GOES HERE========================================="
 
-MarkupColumns(div_set[7])
+MarkupColumns(dicDataPages[11])
+
 
 
 # Output1: doesn't preserve turkish and kyrgyz specific letter
