@@ -114,7 +114,7 @@ def MarkupDictData(oDOM)
         end
 end
 #==========================================================================
-def MarkupColumns(o_div)
+def MarkupPageColumns(o_div)
 	p_elems = o_div.children()# select everything inside div
 	first_p = p_elems[0]
 	first_p.add_previous_sibling "<div class = 'LeftColumn'/>"
