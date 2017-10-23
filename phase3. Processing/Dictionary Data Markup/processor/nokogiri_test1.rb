@@ -4,9 +4,11 @@ require 'nokogiri-styles'
 
 def DelimitLines(oDOM)
         x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+	counter = 0
 	        x_element.each() do |i|
 		        i.add_next_sibling "<br>"
 	        end
+	puts "Lines Marked Up: " + counter.to_s
 end
 #==========================================================================
 def MarkupDictData(oDOM)
@@ -60,6 +62,13 @@ def MarkupPageColumns(o_div)
 	end
 	#leftColumn.next_sibling = rightColumn
 end
+def ColumnsMarkup(_oDOM)
+# Recieves dictionary with marked DictData divs
+	dicDataPages = _oDOM.xpath("/html/body/div[@class = 'DictData']")	
+	dicDataPages.each() do |node|
+		MarkupPageColumns(node)
+	end
+end
 def ParsingOfAttrValues(_oDOM)
 
 	node = _oDOM.xpath("/html/body/div[3]/p[0]")
@@ -93,12 +102,13 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-
+#DelimitLines(oDOM)
 MarkupDictData(oDOM)
-dicDataPages = oDOM.xpath("/html/body/div[@class = 'DictData']")
-MarkupColumns(dicDataPages[0])
-puts "\n NEXT PAGE GOES HERE========================================="
-MarkupColumns(dicDataPages[11])
+ColumnsMarkup(oDOM)
+#dicDataPages = oDOM.xpath("/html/body/div[@class = 'DictData']")
+#MarkupPageColumns(dicDataPages[0])
+#puts "\n NEXT PAGE GOES HERE========================================="
+#MarkupPageColumns(dicDataPages[11])
 
 # Output1: doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
