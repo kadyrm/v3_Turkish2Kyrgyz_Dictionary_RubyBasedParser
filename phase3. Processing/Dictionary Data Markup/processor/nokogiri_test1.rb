@@ -157,9 +157,12 @@ end
 def ColumnsMarkup(_oDOM)
 # Recieves dictionary with marked DictData divs
 	dicDataPages = _oDOM.xpath("/html/body/div[@class = 'DictData']")	
+	counter = 0
 	dicDataPages.each() do |node|
 		MarkupPageColumns(node)
+		counter+=1
 	end
+	puts "Pages processed:\t" + (counter+1).to_s
 end
 
 def ParsingOfAttrValues(_oDOM)
