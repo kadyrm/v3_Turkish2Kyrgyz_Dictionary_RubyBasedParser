@@ -1,5 +1,17 @@
 require 'nokogiri'
 require 'open-uri'
+#*********************************************************************
+def checkXPath(_current, _XPath)
+	output = _current.xpath(_XPath)
+end
+#--------------------------------------------------------------------
+def test_checkXPath(_oDOM)
+	# some testing
+	@doc = Nokogiri::HTML::DocumentFragment.parse _oDOM.to_html
+	node = _oDOM.xpath("/html/body/div[4]/p[5]")
+	puts checkXPath(@doc, "./h1")
+	# end			
+end
 #***********************************************************************************
 def getLine(_entry_token, _line_num)
 
@@ -51,23 +63,28 @@ def MarkupDictData(oDOM)
 end
 
 end
-# creating io object
-html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
+######################################################################
+# MAIN FUNCTION
+	# input	
+	# creating input object
+	html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
+	# end
+	# creating DOM object from input object
+	oDOM = Nokogiri::HTML(html_data)
+	# some testing
+	test_checkXPath(oDOM)
+	# end
+	# output 
+	# doesn't preserve turkish and kyrgyz specific letter
+	#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
-# creating DOM object from io object
-oDOM = Nokogiri::HTML(html_data)
-
-test_getLine(oDOM)
-
-# output below doesn't preserve turkish and kyrgyz specific letter
-#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
-
-# output below doesn't preserve content text at all
-#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
+	# output below doesn't preserve content text at all
+	#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
+	# end
 
 
-
-
+######################################################################
+# CODE SNIPPETS
 =begin
 # code snippet from: https://stackoverflow.com/questions/24086304/nokogiri-write-html-to-oddness
 # No1:
