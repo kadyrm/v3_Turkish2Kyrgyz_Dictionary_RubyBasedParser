@@ -1,6 +1,34 @@
 require 'nokogiri'
 require 'open-uri'
+#***********************************************************************************
+def getLine(_entry_token, _line_num)
 
+	#token = _entry_token.clone # doesn't copy anything
+	token = _entry_token.dup # this does
+	fragment = _entry_token.fragment(_entry_token.to_html)
+
+	line_breaks = _entry_token.xpath(".//node()[@style=\"color:red\"]")
+	children = _entry_token.children
+	if line_breaks.count==1	
+		puts "Children in token:\t" + children.count.to_s	
+		puts "Lines in token:\t\t" + line_breaks.count.to_s
+		node = 	line_breaks[1]
+		puts "Line Break:\t"	+ node.to_s
+		index_ch = children.index(node)
+		puts "Line Break Index:\t"	+ index_ch.to_s
+		
+	end		
+	direct_sel = token.xpath(".//node()[@style=\"color:red\"][1]/following::node()")
+	puts _entry_token
+	puts fragment
+	#puts direct_sel		
+end
+#-----------------------------------------------------------------++++
+def test_getLine(_oDOM)
+	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
+	getLine(entry_tokens[0], 2)
+end
+#***********************************************************************************
 def DelimitLines(oDOM)
 x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
 	x_element.each() do |i|
@@ -29,10 +57,10 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-MarkupDictData(oDOM)
+test_getLine(oDOM)
 
 # output below doesn't preserve turkish and kyrgyz specific letter
-oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+#oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
 # output below doesn't preserve content text at all
 #File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
