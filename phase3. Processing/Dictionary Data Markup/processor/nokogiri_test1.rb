@@ -10,7 +10,7 @@ def fileIO_issue_fix(_oDOM)
 	@doc = Nokogiri::HTML::DocumentFragment.parse s
 	# output 
 	# doesn't preserve turkish and kyrgyz specific letter
-	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'windows-1251')
+	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
 	# output below doesn't preserve content text at all
 	#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
