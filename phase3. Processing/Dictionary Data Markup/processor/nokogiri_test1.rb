@@ -17,46 +17,41 @@ def fileIO_issue_fix(_oDOM)
 	# end
 
 end
-#*********************************************************************
-def checkXPath(_current, _XPath)
-	output = _current.xpath(_XPath)
+
+#**************************************************************************
+def evalXPath(_current, _XPath)
+	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
+	output = @doc.xpath(_XPath)
+
 end
 #--------------------------------------------------------------------
-def test_checkXPath(_oDOM)
-	# some testing
-	
+def test_evalXPath(_oDOM)
+	# some testing	
+	curr_node = _oDOM.xpath("/html/body/div[4]/p[5]")
+	nodes = evalXPath(curr_node, ".//node()[@style=\"color:red\"][1]/preceding::text()")
+	puts nodes.to_s
+	puts nodes.to_s.length
 
-	node = _oDOM.xpath("/html/body/div[4]/p[5]")
-	puts checkXPath(node, "./h1")
 	# end			
 end
 #***********************************************************************************
 def getLine(_entry_token, _line_num)
 
-	#token = _entry_token.clone # doesn't copy anything
-	token = _entry_token.dup # this does
-	fragment = _entry_token.fragment(_entry_token.to_html)
-
-	line_breaks = _entry_token.xpath(".//node()[@style=\"color:red\"]")
-	children = _entry_token.children
-	if line_breaks.count==1	
-		puts "Children in token:\t" + children.count.to_s	
-		puts "Lines in token:\t\t" + line_breaks.count.to_s
-		node = 	line_breaks[1]
-		puts "Line Break:\t"	+ node.to_s
-		index_ch = children.index(node)
-		puts "Line Break Index:\t"	+ index_ch.to_s
-		
-	end		
-	direct_sel = token.xpath(".//node()[@style=\"color:red\"][1]/following::node()")
-	puts _entry_token
-	puts fragment
-	#puts direct_sel		
+	line_markups = _entry_token.xpath(".//node()[@style=\"color:red\"]")
+	if _line_num==1	
+		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/preceding::text()")
+		puts "line selected:\t" + nodes.to_s
+		puts "line length:\t" + nodes.to_s.length.to_s
+	else
+		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/following::text()")
+		puts "line selected:\t" + nodes.to_s
+		puts "line length:\t" + nodes.to_s.length.to_s
+	end					
 end
 #-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
 	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
-	getLine(entry_tokens[0], 2)
+	getLine(entry_tokens[0], 1)
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
@@ -90,7 +85,9 @@ end
 	# creating DOM object from input object
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
-	fileIO_issue_fix(oDOM)
+
+	test_getLine(oDOM)
+
 	# end
 	# output 
 	# doesn't preserve turkish and kyrgyz specific letter
