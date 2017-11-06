@@ -1,6 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
-#**********************************************************************
+#**************************************************************************
 def fileIO_issue_fix(_oDOM)
 	file_content=_oDOM.to_html
 	if ! file_content.valid_encoding?
@@ -9,7 +9,8 @@ def fileIO_issue_fix(_oDOM)
 	end
 	@doc = Nokogiri::HTML::DocumentFragment.parse s
 	# output 
-	# doesn't preserve turkish and kyrgyz specific letter
+	# didn't preserve turkish and kyrgyz specific letter
+	# fixed after input file encoding was changed to UTF-8
 	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
 	# output below doesn't preserve content text at all
@@ -17,17 +18,17 @@ def fileIO_issue_fix(_oDOM)
 	# end
 
 end
-#*********************************************************************
+#**************************************************************************
 def checkXPath(_current, _XPath)
-	output = _current.xpath(_XPath)
+	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
+	output = @doc.xpath(_XPath)
+
 end
 #--------------------------------------------------------------------
 def test_checkXPath(_oDOM)
-	# some testing
-	
-
+	# some testing	
 	node = _oDOM.xpath("/html/body/div[4]/p[5]")
-	puts checkXPath(node, "./h1")
+	puts checkXPath(node, ".//node()[@style=\"color:red\"][1]/preceding::node()")
 	# end			
 end
 #***********************************************************************************
@@ -90,7 +91,7 @@ end
 	# creating DOM object from input object
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
-	fileIO_issue_fix(oDOM)
+	test_checkXPath(oDOM)
 	# end
 	# output 
 	# doesn't preserve turkish and kyrgyz specific letter
