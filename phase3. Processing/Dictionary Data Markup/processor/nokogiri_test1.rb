@@ -28,7 +28,7 @@ end
 def test_checkXPath(_oDOM)
 	# some testing	
 	node = _oDOM.xpath("/html/body/div[4]/p[5]")
-	puts checkXPath(node, ".//node()[@style=\"color:red\"][1]/preceding::node()")
+	puts checkXPath(node, "./span[1]/following-sibling::node() intersect ./span[6]/preceding-sibling::node()")
 	# end			
 end
 #***********************************************************************************
