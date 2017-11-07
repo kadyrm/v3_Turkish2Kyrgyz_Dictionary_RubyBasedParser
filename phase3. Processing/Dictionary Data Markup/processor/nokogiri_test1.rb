@@ -1,5 +1,34 @@
 require 'nokogiri'
 require 'open-uri'
+#**************************************************************************
+def passStyleToChildren(_node)
+# doesn't take into account independent text nodes
+	_node.children.each() do |child|
+		if child.element
+			#child.after "<span style=" + _node['style'].to_s + ">"
+			#child.parent = child.next_sibling
+			puts child.to_s + " is element node"
+			
+		else
+			child['style'] = child['style'].to_s + "; " + _node['style'].to_s
+		end
+	end
+end
+def nested_spans_fix(_token)
+	node_set = _token.xpath(".//span/span[1]")
+	node_set.each() do |node|
+		#passStyleToChildren(node.parent)
+		nested = node.parent.inner_html
+		node.parent.after(nested)
+		node.parent.remove
+	end
+
+end
+def test_nested_spans_fix(_oDOM)
+	node = _oDOM.xpath("/html/body/div[4]/p[5]")
+	nested_spans_fix(node)
+	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+end
 #**********************************************************************
 def fileIO_issue_fix(_oDOM)
 	file_content=_oDOM.to_html
@@ -86,7 +115,7 @@ end
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
 
-	test_getLine(oDOM)
+	test_nested_spans_fix(oDOM)
 
 	# end
 	# output 
