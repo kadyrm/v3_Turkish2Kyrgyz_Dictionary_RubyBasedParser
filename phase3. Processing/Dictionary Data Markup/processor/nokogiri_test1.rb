@@ -1,32 +1,40 @@
 require 'nokogiri'
 require 'open-uri'
 #**************************************************************************
-def passStyleToChildren(_node)
-# doesn't take into account independent text nodes
-	_node.children.each() do |child|
-		if child.element
-			#child.after "<span style=" + _node['style'].to_s + ">"
-			#child.parent = child.next_sibling
-			puts child.to_s + " is element node"
-			
-		else
-			child['style'] = child['style'].to_s + "; " + _node['style'].to_s
-		end
-	end
+def enable_style_tag(_oDOM)
+	node = _oDOM.at_xpath("/html/head/style")
+	s=node.inner_html.to_s
+	s.delete("<![CDATA[")
+	# needs a further look
+	s.delete("\<\!--")
+	s.delete("\/* Font Definitions *\/")
+	s.delete("--\>")
+	s.delete("--\>")
+	s.delete("]]>")
+	node.inner_html = s
+
 end
 def nested_spans_fix(_token)
-	node_set = _token.xpath(".//span/span[1]")
+	node_set = _token.xpath(".//span/child::span[1]")
 	node_set.each() do |node|
-		#passStyleToChildren(node.parent)
+		#passStyleToChildren(node)
 		nested = node.parent.inner_html
 		node.parent.after(nested)
-		node.parent.remove
+		node.parent.content = ""
+		node['note'] = "nested_span"
+		puts "nested span fix performed:"
+		puts _token.css_path.to_s + node.path.to_s
+		#puts node.to_html
+		
 	end
 
 end
+
 def test_nested_spans_fix(_oDOM)
-	node = _oDOM.xpath("/html/body/div[4]/p[5]")
-	nested_spans_fix(node)
+	node_set = _oDOM.xpath("/html/body/div[4]")
+	nested_spans_fix(node_set[0])
+	nested_spans_fix(node_set[0])
+	enable_style_tag(_oDOM)
 	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 end
 #**********************************************************************
