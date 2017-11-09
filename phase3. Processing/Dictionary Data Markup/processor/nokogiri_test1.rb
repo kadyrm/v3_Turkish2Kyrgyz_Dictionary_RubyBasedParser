@@ -19,20 +19,24 @@ def fileIO_issue_fix(_oDOM)
 
 end
 #**************************************************************************
-def checkXPath(_current, _XPath)
-	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
-	output = @doc.xpath(_XPath)
-
+def checkXPath(_look_in, _XPath)
+	@doc = Nokogiri::HTML::DocumentFragment.parse _look_in.to_html
+	output_set = @doc.xpath(_XPath)
+	puts "Total results:\t" + output_set.count.to_s
+	output_set.each() do |output|
+		puts "result no:\t" + output_set.index(output).to_s
+		puts output.content.to_s
+		puts "result's following-sibling:\t" + output.next_sibling.content.to_s
+		
+	end
 end
 #--------------------------------------------------------------------
 def test_checkXPath(_oDOM)
 	# some testing	
-	current = _oDOM.xpath("/html/body/div[4]/p[5]")
-	puts checkXPath(current, ".//node()[@style=\"color:red\"][1]/following-sibling::node()
-							[count(. |.//node()[@style=\"color:red\"][2]/preceding-sibling::node()) 
-							= 
-							count(.//node()[@style=\"color:red\"][2]/preceding-sibling::node())
-							]")
+	#.WordSection4 > p:nth-child(11)
+	look_in = _oDOM.xpath("/html/body/div[4]/p[48]")
+	puts "Looking in:\n\t" + look_in[0].content
+	checkXPath(look_in, ".//b/preceding-sibling::b")
 	# end			
 end
 #***********************************************************************************
