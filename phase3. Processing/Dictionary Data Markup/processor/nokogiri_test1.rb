@@ -1,5 +1,43 @@
 require 'nokogiri'
 require 'open-uri'
+#*******************************************************************
+def merge_paired_tags(_enter_point, _tag_name)
+#debug version
+	xpath_query  = ".//" + _tag_name
+	node_set = _enter_point.xpath(xpath_query)
+	node_set.each() do |node|
+		if node.next_sibling!=nil and node.next_sibling.name= node.name
+			puts "before merge:\nnode \n\t\t name:\t" + node.name
+			puts "\t\tcontent:\t"+node.content
+			puts "next sibling\n\t name:\t" + node.next_sibling.name
+			puts "\tcontent:\t"+node.next_sibling.content
+			puts "\tmarkup:\t"+node.next_sibling.to_html
+			node<<node.next_sibling.inner_html
+			puts "\n\nafter merge:\nnode\n\tcontent:\t"+node.content
+			puts "markup:\t"+node.to_html
+			node.next_sibling.remove
+		end
+	end
+end
+#-------------------------------------------------------------------
+def test_merge_paired_tags(_oDOM)
+	node_set = _oDOM.xpath("/html/body/div[4]/p[2]")
+	puts "The content before:\t"
+	puts node_set[0].content
+	puts "The markup before:\t"
+	puts node_set[0].to_html
+	3.times do |i|
+		puts "\n\n****************\n\nloop:" + i.to_s;
+		merge_paired_tags(node_set[0], "b")
+		#merge_paired_tags(node_set[0], "span")
+	end
+	puts "\n\n----------------\nThe markup after:\t"
+        puts node_set[0].to_html
+	puts "The content after:\t"
+        puts node_set[0].content
+
+
+end
 #**************************************************************************
 def enable_style_tag(_oDOM)
 	node = _oDOM.at_xpath("/html/head/style")
@@ -122,9 +160,11 @@ end
 	# creating DOM object from input object
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
+	
+	test_merge_paired_tags(oDOM)
 
-	test_nested_spans_fix(oDOM)
-
+	enable_style_tag(oDOM)
+	oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 	# end
 	# output 
 	# doesn't preserve turkish and kyrgyz specific letter
