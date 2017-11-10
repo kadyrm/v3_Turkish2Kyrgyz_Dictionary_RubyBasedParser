@@ -6,7 +6,7 @@ def merge_paired_tags(_enter_point, _tag_name)
 	xpath_query  = ".//" + _tag_name
 	node_set = _enter_point.xpath(xpath_query)
 	node_set.each() do |node|
-		if node.next_sibling!=nil and node.next_sibling.name= node.name
+		if node.next_sibling!=nil and node.next_sibling.name==node.name
 			puts "before merge:\nnode \n\t\t name:\t" + node.name
 			puts "\t\tcontent:\t"+node.content
 			puts "next sibling\n\t name:\t" + node.next_sibling.name
@@ -15,7 +15,7 @@ def merge_paired_tags(_enter_point, _tag_name)
 			node<<node.next_sibling.inner_html
 			puts "\n\nafter merge:\nnode\n\tcontent:\t"+node.content
 			puts "markup:\t"+node.to_html
-			node.next_sibling.remove
+			node.next_sibling.content = ""
 		end
 	end
 end
