@@ -2,11 +2,12 @@ require 'nokogiri'
 require 'open-uri'
 #*******************************************************************
 def remove_blank_tags(_enter_point, _tag_name)
-	xpath_query  = ".//" + _tag_name+"[not(node())]"
+
+	xpath_query  = ".//" + _tag_name+"[not(*)][not(normalize-space())]"
 	node_set = _enter_point.xpath(xpath_query)
         node_set.each() do |node|
 		node.remove
-		puts _tag_name.to_s + "removed"
+		#puts _tag_name.to_s + "\tremoved"
         end
 
 end
@@ -18,7 +19,6 @@ def test_remove_blank_tags(_oDOM)
 	entrance[0].write_xhtml_to(File.new('./compare/before.html', 'w'), :encoding => 'UTF-8')
 	#processing
 	remove_blank_tags(entrance[0], "span")
-	entrance[0].name = "Hello"
 	#end_processing
 	spans = entrance.xpath(".//span")
         puts "spans after:\t" + spans.count.to_s
