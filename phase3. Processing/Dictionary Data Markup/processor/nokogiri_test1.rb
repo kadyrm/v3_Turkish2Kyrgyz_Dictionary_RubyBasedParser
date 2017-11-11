@@ -18,6 +18,7 @@ def test_remove_blank_tags(_oDOM)
 	entrance[0].write_xhtml_to(File.new('./compare/before.html', 'w'), :encoding => 'UTF-8')
 	#processing
 	remove_blank_tags(entrance[0], "span")
+	entrance[0].name = "Hello"
 	#end_processing
 	spans = entrance.xpath(".//span")
         puts "spans after:\t" + spans.count.to_s
