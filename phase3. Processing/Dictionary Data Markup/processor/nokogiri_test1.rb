@@ -9,6 +9,10 @@ def remove_blank_tags(_enter_point, _tag_name)
         end
 
 end
+def test_remove_blank_tags(_oDOM)
+        entrance = _oDOM.xpath("/html/body/div[4]")
+	remove_blank_tags(entrance[0], "span")
+end
 #-------------------------------------------------------------------
 def merge_paired_tags(_enter_point, _tag_name)
 #usage version
@@ -181,7 +185,7 @@ end
 	oDOM = Nokogiri::HTML(html_data)
 	# some testing
 	
-	test_merge_paired_tags(oDOM)
+	test_remove_blank_tags(oDOM)
 
 	enable_style_tag(oDOM)
 	oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
@@ -193,7 +197,6 @@ end
 	# output below doesn't preserve content text at all
 	#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
 	# end
-
 
 ######################################################################
 # CODE SNIPPETS
