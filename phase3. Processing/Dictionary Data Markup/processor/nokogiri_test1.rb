@@ -40,26 +40,22 @@ def dbg_merge_paired_tags(_enter_point, _tag_name)
 			node.next_sibling.content = ""
 		end
 	end
-	remove_blank_tags(_enter_point,_tag_name)
 end
 #-------------------------------------------------------------------
 def test_merge_paired_tags(_oDOM)
-	node_set = _oDOM.xpath("/html/body/div[4]/p[2]")
-	puts "The content before:\t"
-	puts node_set[0].content
-	puts "The markup before:\t"
-	puts node_set[0].to_html
-	3.times do |i|
-		puts "\n\n****************\n\nloop:" + i.to_s;
-		dbg_merge_paired_tags(node_set[0], "b")
-		dbg_merge_paired_tags(node_set[0], "span")
-		#merge_paired_tags(node_set[0], "span")
-	end
-	puts "\n\n----------------\nThe markup after:\t"
-        puts node_set[0].to_html
-	puts "The content after:\t"
-        puts node_set[0].content
+	node_set = _oDOM.xpath("/html/body/div[4]/p")
 
+	node_set.each() do |node|
+		puts "\n\n****************\n\nloop:" + node_set.index(node).to_s
+		puts "The content before:\t"
+	        puts node.content
+		merge_paired_tags(node, "b")
+		remove_blank_tags(node,"b")
+		merge_paired_tags(node, "span")
+		remove_blank_tags(node,"b")
+	        puts "The content after:\t"
+        	puts node.content
+	end
 
 end
 #**************************************************************************
