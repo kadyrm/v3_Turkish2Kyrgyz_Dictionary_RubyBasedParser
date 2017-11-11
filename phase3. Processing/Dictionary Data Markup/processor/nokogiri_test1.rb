@@ -2,8 +2,10 @@ require 'nokogiri'
 require 'open-uri'
 #*******************************************************************
 def remove_blank_tags(_enter_point, _tag_name)
-
-	xpath_query  = ".//" + _tag_name+"[not(*)][not(normalize-space())]"
+	#alternative xpath queries: 
+	#1./html/body/div[4]/p[3]//span[not(*) and not(text()=" ")]
+	#2.
+	xpath_query  = ".//" + _tag_name+"[not(*)]"
 	node_set = _enter_point.xpath(xpath_query)
         node_set.each() do |node|
 		node.remove
