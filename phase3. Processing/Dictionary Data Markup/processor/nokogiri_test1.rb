@@ -17,17 +17,15 @@ def enable_style_tag(_oDOM)
 
 end
 def nested_spans_fix(_token)
-	node_set = _token.xpath(".//span/child::span[1]")
+# span element must contain only text nodes, if not so inner html should be moved out, i.e. untagged
+	node_set = _token.xpath(".//span[child::*]")
 	node_set.each() do |node|
-		#passStyleToChildren(node)
-		nested = node.parent.inner_html
-		node.parent.after(nested)
-		node.parent.content = ""
-		node['note'] = "nested_span"
+		nested = node.inner_html
+		node.after(nested)
+		node.content = ""
+		node['class'] = "blank"
 		puts "nested span fix performed:"
 		puts _token.css_path.to_s + node.path.to_s
-		#puts node.to_html
-		
 	end
 
 end
