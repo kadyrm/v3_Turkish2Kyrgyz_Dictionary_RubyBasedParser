@@ -2,6 +2,18 @@ require 'nokogiri'
 require 'open-uri'
 #*******************************************************************
 def merge_paired_tags(_enter_point, _tag_name)
+#release version
+        xpath_query  = ".//" + _tag_name
+        node_set = _enter_point.xpath(xpath_query)
+        node_set.each() do |node|
+                if node.next_sibling!=nil and node.next_sibling.name$
+                        node<<node.next_sibling.inner_html
+                        node.next_sibling.content = ""
+                end
+        end
+end
+
+def dbg_merge_paired_tags(_enter_point, _tag_name)
 #debug version
 	xpath_query  = ".//" + _tag_name
 	node_set = _enter_point.xpath(xpath_query)
