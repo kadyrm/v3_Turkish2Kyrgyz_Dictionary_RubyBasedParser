@@ -1,18 +1,28 @@
 require 'nokogiri'
 require 'open-uri'
 #*******************************************************************
+def remove_blank_tags(_enter_point, _tag_name)
+	xpath_query  = ".//" + _tag_name+"[not(*)][not(normalize-space())]"
+	node_set = _enter_point.xpath(xpath_query)
+        node_set.each() do |node|
+		node.remove
+        end
+
+end
+#-------------------------------------------------------------------
 def merge_paired_tags(_enter_point, _tag_name)
-#release version
+#usage version
         xpath_query  = ".//" + _tag_name
         node_set = _enter_point.xpath(xpath_query)
         node_set.each() do |node|
-                if node.next_sibling!=nil and node.next_sibling.name$
+                if node.next_sibling!=nil and node.next_sibling.name==node.name
                         node<<node.next_sibling.inner_html
                         node.next_sibling.content = ""
                 end
         end
+	#remove_blank_tags(_enter_point,_tag_name)
 end
-
+#-------------------------------------------------------------------
 def dbg_merge_paired_tags(_enter_point, _tag_name)
 #debug version
 	xpath_query  = ".//" + _tag_name
@@ -30,6 +40,7 @@ def dbg_merge_paired_tags(_enter_point, _tag_name)
 			node.next_sibling.content = ""
 		end
 	end
+	remove_blank_tags(_enter_point,_tag_name)
 end
 #-------------------------------------------------------------------
 def test_merge_paired_tags(_oDOM)
@@ -40,7 +51,8 @@ def test_merge_paired_tags(_oDOM)
 	puts node_set[0].to_html
 	3.times do |i|
 		puts "\n\n****************\n\nloop:" + i.to_s;
-		merge_paired_tags(node_set[0], "b")
+		dbg_merge_paired_tags(node_set[0], "b")
+		dbg_merge_paired_tags(node_set[0], "span")
 		#merge_paired_tags(node_set[0], "span")
 	end
 	puts "\n\n----------------\nThe markup after:\t"
