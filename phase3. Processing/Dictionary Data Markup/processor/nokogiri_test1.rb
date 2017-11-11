@@ -11,14 +11,18 @@ def remove_blank_tags(_enter_point, _tag_name)
 
 end
 def test_remove_blank_tags(_oDOM)
+
         entrance = _oDOM.xpath("/html/body/div[4]")
 	spans = entrance.xpath(".//span")
 	puts "spans before:\t" + spans.count.to_s
+	entrance[0].write_xhtml_to(File.new('./compare/before.html', 'w'), :encoding => 'UTF-8')
+	#processing
 	remove_blank_tags(entrance[0], "span")
+	#end_processing
 	spans = entrance.xpath(".//span")
         puts "spans after:\t" + spans.count.to_s
 
-	#entrance[0].write_xhtml_to(File.new('./compare/after.html', 'w'), :encoding => 'UTF-8')
+	entrance[0].write_xhtml_to(File.new('./compare/after.html', 'w'), :encoding => 'UTF-8')
 
 end
 #-------------------------------------------------------------------
