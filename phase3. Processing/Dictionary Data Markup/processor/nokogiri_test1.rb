@@ -53,6 +53,8 @@ def dbg_merge_paired_tags(_enter_point, _tag_name)
 		end
 	end
 	puts "Total mergings:\t" + counter.to_s
+	#cleaning up blank nodes
+	remove_blank_tags(_enter_point, _tag_name)	
 end
 #-------------------------------------------------------------------
 def test_merge_paired_tags(_oDOM)
