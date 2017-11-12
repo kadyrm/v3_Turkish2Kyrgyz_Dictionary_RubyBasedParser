@@ -2,7 +2,8 @@ require 'nokogiri'
 require 'open-uri'
 #*******************************************************************
 def remove_blank_tags(_enter_point, _tag_name)
-	xpath_query  = ".//" + _tag_name+"[not(*)][not(normalize-space())]"
+	#xpath_query  = ".//" + _tag_name+"[not(*)][not(normalize-space())]"
+	xpath_query = ".//*[@class='blank']"
 	node_set = _enter_point.xpath(xpath_query)
         node_set.each() do |node|
 		node.remove
@@ -20,39 +21,52 @@ def merge_paired_tags(_enter_point, _tag_name)
                         node.next_sibling.content = ""
                 end
         end
-	#remove_blank_tags(_enter_point,_tag_name)
+	
+
 end
 #-------------------------------------------------------------------
 def dbg_merge_paired_tags(_enter_point, _tag_name)
 #debug version
 	xpath_query  = ".//" + _tag_name
 	node_set = _enter_point.xpath(xpath_query)
+	counter =0
 	node_set.each() do |node|
-		if node.next_sibling!=nil and node.next_sibling.name==node.name
-			puts "before merge:\nnode \n\t\t name:\t" + node.name
+		if node.next_sibling!=nil and node['class']!="blank" and node.next_sibling.name==node.name
+			puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11"
+			puts "Merge No:\t" + (counter+1).to_s
+			puts "before merge:************************\n"
+			puts "\tcurrent node\n\t\t name:\t" + node.name
 			puts "\t\tcontent:\t"+node.content
-			puts "next sibling\n\t name:\t" + node.next_sibling.name
-			puts "\tcontent:\t"+node.next_sibling.content
-			puts "\tmarkup:\t"+node.next_sibling.to_html
+			puts "\t\tmarkup:\t"+node.to_html
+			puts "\tnext node\n"
+			puts "\t\t name:\t" + node.next_sibling.name
+			puts "\t\tcontent:\t"+node.next_sibling.content
+			puts "\t\tmarkup:\t"+node.next_sibling.to_html
 			node<<node.next_sibling.inner_html
-			puts "\n\nafter merge:\nnode\n\tcontent:\t"+node.content
-			puts "markup:\t"+node.to_html
 			node.next_sibling.content = ""
+			node.next_sibling['class'] = "blank"
+			puts "\nafter merge**********************\n"
+			puts "\tcurrent node\n"
+			puts "\t\tcontent:\t"+node.content
+			puts "\t\tmarkup:\t"+node.to_html
+			counter=+1
 		end
 	end
+	puts "Total mergings:\t" + counter.to_s
 end
 #-------------------------------------------------------------------
 def test_merge_paired_tags(_oDOM)
 	node_set = _oDOM.xpath("/html/body/div[4]/p")
 
 	node_set.each() do |node|
-		puts "\n\n****************\n\nloop:" + node_set.index(node).to_s
+		puts "\n\n****************\n\n"
+		puts "paragraph: " + node_set.index(node).to_s
 		puts "The content before:\t"
 	        puts node.content
-		merge_paired_tags(node, "b")
-		remove_blank_tags(node,"b")
-		merge_paired_tags(node, "span")
-		remove_blank_tags(node,"b")
+#		dbg_merge_paired_tags(node, "b")
+		#remove_blank_tags(node,"b")
+		dbg_merge_paired_tags(node, "span")
+		#remove_blank_tags(node,"b")
 	        puts "The content after:\t"
         	puts node.content
 	end
