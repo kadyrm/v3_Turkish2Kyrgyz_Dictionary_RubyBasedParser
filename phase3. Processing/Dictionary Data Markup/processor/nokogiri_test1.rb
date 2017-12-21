@@ -2,25 +2,41 @@ require 'nokogiri'
 require 'open-uri'
 require 'nokogiri-styles'
 #----------------------------------------------------------------
-def get_CSS_style_tag(_node, _oDOM)
-        style_nodes=_oDOM.xpath("/html//style")
-        css_str= style_nodes[0].content	
-	css_def=css_str.scan(/p.MsoBodyText[\w|\W]+?\}/).to_s
-	puts css_def
-	css_rules=css_def.scan(/margin[\w|\W]+?;/)
-	puts css_rules
-
-
-        class_str= _node["class"].to_str
+def get_CSS_data(_node, _oDOM)
+	class_str= _node["class"].to_str
         puts "class:\t" + class_str
- 
+	#1
+	css_att = get_CSS_att_val(_node)
+	#2
+	css_tag_c = get_CSS_tag_content(_oDOM)
+	css_class_d = get_CSS_class_def(class_str, css_tag_c)
+	css_rules  = get_CSS_rules(css_class_d)
+	css_tag = css_rules
+	#3
+	css_data = css_att.to_s + ";" + css_tag.to_s
+	puts css_data
 
 end
-def get_CSS_style_attr(_node)
-# uses nokogiri-styles, simple inline css parser
-	style_inline = _node['style'].to_str
-	puts "css:\t" + style_inline
+def get_CSS_class_def(_class_name, _css_data)
+	css_def=_css_data.scan(/p.MsoBodyText[\w|\W]+?\}/).to_s
+        css_def
+end
+def get_CSS_rules(_css_class)
+	css_rules=_css_class.scan(/\{[\w|\W]+\}/)
+        css_rules
 
+end
+def get_CSS_tag_content(_oDOM)
+# returns css data found in <style> tag's value
+
+        style_nodes=_oDOM.xpath("/html//style")
+        css_str= style_nodes[0].content	
+
+end
+def get_CSS_att_val(_node)
+# uses nokogiri-styles, simple inline css parser
+# returns inline css data found in @style attribute's value
+	style_inline = _node['style'].to_str
 
 end
 #----------------------------------------------------------------
@@ -221,7 +237,7 @@ oDOM = Nokogiri::HTML(html_data)
 
 tag_set = oDOM.xpath("/html/body/div[4]/p[5]")
 node=tag_set[0]
-get_CSS_style_tag(node, oDOM)
+get_CSS_data(node, oDOM)
 
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
