@@ -2,11 +2,20 @@ require 'nokogiri'
 require 'open-uri'
 require 'nokogiri-styles'
 #----------------------------------------------------------------
-def get_CSS_by_class(_tag_node)
-	class_str= _tag_node["class"].to_str
-	puts "class:\t" + class_str
-	style_str = _tag_node['style'].to_str
-	puts "css:\t" + style_str
+def get_CSS_style_tag(_node, _oDOM)
+        style_nodes=_oDOM.xpath("/html//style")
+        puts style_nodes[0].to_s
+        class_str= _node["class"].to_str
+        puts "class:\t" + class_str
+ 
+
+end
+def get_CSS_style_attr(_node)
+# uses nokogiri-styles, simple inline css parser
+	style_inline = _node['style'].to_str
+	puts "css:\t" + style_inline
+
+
 end
 #----------------------------------------------------------------
 #*******************************************************************
@@ -205,10 +214,8 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 oDOM = Nokogiri::HTML(html_data)
 
 tag_set = oDOM.xpath("/html/body/div[4]/p[5]")
-tag_node=tag_set[0]
-puts tag_node
-puts tag_node.content
-get_CSS_by_class(tag_node)
+node=tag_set[0]
+get_CSS_style_tag(node, oDOM)
 
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
