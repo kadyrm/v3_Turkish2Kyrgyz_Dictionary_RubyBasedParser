@@ -1,4 +1,4 @@
-<style>
+
 <!--
  /* Font Definitions */
  @font-face
@@ -9575,5 +9575,11 @@ ol
 ul
 	{margin-bottom:0in;}
 -->
-</style>
+class:	MsoNormal
+["p.MsoBodyText, li.MsoBodyText, div.MsoBodyText\r\n\t{mso-style-priority:1;\r\n\tmso-style-unhide:no;\r\n\tmso-style-qformat:yes;\r\n\tmso-style-link:\"Body Text Char\";\r\n\tmargin-top:0in;\r\n\tmargin-right:0in;\r\n\tmargin-bottom:0in;\r\n\tmargin-left:50.6pt;\r\n\tmargin-bottom:.0001pt;\r\n\tmso-pagination:none;\r\n\tmso-layout-grid-align:none;\r\n\ttext-autospace:none;\r\n\tfont-size:10.0pt;\r\n\tfont-family:\"Times New Roman\",\"serif\";\r\n\tmso-fareast-font-family:\"Times New Roman\";}"]
+margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:50.6pt;
+margin-bottom:.0001pt;
 class:	MsoNormal

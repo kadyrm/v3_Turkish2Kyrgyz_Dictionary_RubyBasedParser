@@ -4,7 +4,13 @@ require 'nokogiri-styles'
 #----------------------------------------------------------------
 def get_CSS_style_tag(_node, _oDOM)
         style_nodes=_oDOM.xpath("/html//style")
-        puts style_nodes[0].to_s
+        css_str= style_nodes[0].content	
+	css_def=css_str.scan(/p.MsoBodyText[\w|\W]+?\}/).to_s
+	puts css_def
+	css_rules=css_def.scan(/margin[\w|\W]+?;/)
+	puts css_rules
+
+
         class_str= _node["class"].to_str
         puts "class:\t" + class_str
  
