@@ -9,35 +9,43 @@ def get_CSS_prop_val(_prop_name, _node, _oDOM)
 end
 def get_CSS_total(_node, _DOM)
 # Summ: access both inline(from style att) and centralized(from style tag) css data
-# Algorithm:
-# 1. get _node's css_data from dedicated style tag
-# 2. get _node's class_name
-# 3. scan for class_name's css_data in the style tag's css_data
-# 4. extract (to tag_css) from the _node's class css_data only css_rules
-# 5. get _node's inline css to att_css
-# 6. merge (to css) tag_css rules with att_css rules
+
 	#1
-	css_data = get_CSS_style_tag(_DOM)
+        centralized_css_str = get_CSS_centralized(_node, _DOM)
 	#2
-	class_name = _node["class"].to_str
-	#3
-	css_data_arr = css_data.scan(/p.MsoBodyText[\w|\W]+?\}/)
-		# here (above line) must be used class_name in regex
-		# css_data is an array
-	#4
-        tag_css_str = get_CSS_centralized(arr_to_str(css_data_arr))
-	#5
-	att_css_str =  _node['style']
-	puts "In get_CSS: \n Inline css rules: \n" + att_css_str
+	inline_css_str =  get_CSS_inline(_node)
+
+	puts "In get_CSS: \n Inline css rules: \n" + inline_css_str
         char = gets
 
-	#6
-	css_str = att_css_str+ tag_css_str 
+	css_str = inline_css_str+";" + centralized_css_str 
 end
-def get_CSS_centralized(_cssClass_str)
-	css_rules_arr  = _cssClass_str.scan(/\{[\w|\W]+\}/)# works
+def get_CSS_inline(_node)
+	att_css_str =  _node['style']
+end
+def get_CSS_centralized(_node, _DOM)
+# Algorithm:
+# 1. get all centralized css data from the dedicated style tag
+# 2. get _node's class_name
+# 3. get only css relating to the node's class name
+# 4. get only css rules
+# 5. convert them to string data type and remove curly bracket and formatting chars
+        #1
+        css_data = get_CSS_style_tag(_DOM)
+        #2
+        class_name = _node["class"].to_str
+        #3
+        css_data_arr = css_data.scan(/p.MsoBodyText[\w|\W]+?\}/)
+                # here (above line) must be used class_name in regex
+                # css_data is an array
+        #4
+	css_data_str = arr_to_str(css_data_arr)
+	css_rules_arr  = css_data_str.scan(/\{[\w|\W]+\}/)# works
+	#5
 	css_rules_str = arr_to_str(css_rules_arr).delete "{}\n\r\t"
-	puts "In get_CSS_rules: \n node's dedicated css rules: \n" + css_rules_str
+
+
+	puts "In get_CSS_centralized: \n node's dedicated css rules: \n" + css_rules_str
 	ch = gets
 	css_rules_str
 end
