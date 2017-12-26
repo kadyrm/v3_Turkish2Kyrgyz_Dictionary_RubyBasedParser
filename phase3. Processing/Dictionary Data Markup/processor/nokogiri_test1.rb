@@ -35,18 +35,48 @@ def test_evalXPath(_oDOM)
 	# end			
 end
 #***********************************************************************************
-def getLine(_entry_token, _line_num)
+def insertLineBreaks(_token)
+# at least one line exists in a token
+	eol_s = _token.xpath(".//span[@style=\"color:red\"]")
+	puts "inside insertLineBreaks\n"
+        eol_s.each() do |eol|
+		puts "next sibling before:\n" + eol.next_sibling.to_html
+                eol.add_next_sibling "<br>"
+		puts "next sibling after:\n" + eol.next_sibling.to_html
+        end
+	puts "html code output:\n" + _token.to_html
+	char = gets
+	puts "eol elements refs after modification:\n"
+	eol_s.each() do |eol|
+		puts eol.to_html + "\n"
+	end	
+	eol_s.count
+end
+def getLine(_token, _index)
+# Algorithm:
+#	1. There must be <br> elements inserted in the token's html
+#		otherwise do it
+#	2. Get inner html of the token
+#	3. Split the html code as a string delimited by <br>
+#	4. Return a piece at the shown index
 
-	line_markups = _entry_token.xpath(".//node()[@style=\"color:red\"]")
-	if _line_num==1	
-		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/preceding::text()")
-		puts "line selected:\t" + nodes.to_s
-		puts "line length:\t" + nodes.to_s.length.to_s
-	else
-		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/following::text()")
-		puts "line selected:\t" + nodes.to_s
-		puts "line length:\t" + nodes.to_s.length.to_s
-	end					
+	#1
+	breaks_s = _token.xpath(".//br")
+	if breaks_s.count == 0
+		insertLineBreaks(_token)
+	end 
+	#2.
+	html_str = _token.inner_html
+	puts "\ninside getLine\n"
+	puts "***tokens inner html:\n" + html_str
+	char = gets
+	lines_arr = html_str.split("<br>")
+	puts "\nlines:\n"
+	lines_arr.each() do |el|
+	 puts el + "\n"
+	end
+	char = gets
+	lines_arr[_index]
 end
 #-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
