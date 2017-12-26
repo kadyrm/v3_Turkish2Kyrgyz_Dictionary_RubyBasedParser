@@ -36,21 +36,33 @@ def test_evalXPath(_oDOM)
 end
 #***********************************************************************************
 def insertLineBreaks(_token)
-# at least one line exists in a token
-	eol_s = _token.xpath(".//span[@style=\"color:red\"]")
-	puts "inside insertLineBreaks\n"
-        eol_s.each() do |eol|
-		puts "next sibling before:\n" + eol.next_sibling.to_html
-                eol.add_next_sibling "<br>"
-		puts "next sibling after:\n" + eol.next_sibling.to_html
-        end
-	puts "html code output:\n" + _token.to_html
-	char = gets
-	puts "eol elements refs after modification:\n"
-	eol_s.each() do |eol|
-		puts eol.to_html + "\n"
-	end	
-	eol_s.count
+# Description: inserts line breaks and returns the number of inserted line breaks
+# Assumption: at least one line exists in a token
+# Algorithm:
+#	1. checkout if there are not breaks already inserted
+#	2. if so simply return lines count
+#	3. else retrieve spans with css style = color:red
+#	4. insert after eahc such an element breaking markup
+#	5. return the number of inserted line breaks
+	breaks_s = _token.xpath(".//br")
+	if breaks_s.count ==0
+		breaks_s.count	
+	else
+		eol_s = _token.xpath(".//span[@style=\"color:red\"]")
+		puts "inside insertLineBreaks\n"
+	        eol_s.each() do |eol|
+			puts "next sibling before:\n" + eol.next_sibling.to_html
+        	        eol.add_next_sibling "<br>"
+			puts "next sibling after:\n" + eol.next_sibling.to_html
+        	end
+		puts "html code output:\n" + _token.to_html
+		char = gets
+		puts "eol elements refs after modification:\n"
+		eol_s.each() do |eol|
+			puts eol.to_html + "\n"
+		end	
+		eol_s.count
+	end
 end
 def getLine(_token, _index)
 # Algorithm:
@@ -81,7 +93,11 @@ end
 #-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
 	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
-	getLine(entry_tokens[0], 1)
+	line=	getLine(entry_tokens[0], 1)
+	line_count = insert
+	puts "\ninside test_getLine\n"
+	puts "Lines number:\t" + 
+	
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
