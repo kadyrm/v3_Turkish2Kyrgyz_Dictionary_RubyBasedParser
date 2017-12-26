@@ -2,38 +2,60 @@ require 'nokogiri'
 require 'open-uri'
 require 'nokogiri-styles'
 #----------------------------------------------------------------
-def get_CSS_data(_node, _oDOM)
-	class_str= _node["class"].to_str
-        puts "class:\t" + class_str
+def get_CSS_prop_val(_prop_name, _node, _oDOM)
+	css_str = get_CSS_total(_node, _oDOM)
+	
+	puts "In get_CSS_prop_val: \n" + css_str
+end
+def get_CSS_total(_node, _DOM)
+# Summ: access both inline(from style att) and centralized(from style tag) css data
+# Algorithm:
+# 1. get _node's css_data from dedicated style tag
+# 2. get _node's class_name
+# 3. scan for class_name's css_data in the style tag's css_data
+# 4. extract (to tag_css) from the _node's class css_data only css_rules
+# 5. get _node's inline css to att_css
+# 6. merge (to css) tag_css rules with att_css rules
 	#1
-	css_att = get_CSS_att_val(_node)
+	css_data = get_CSS_style_tag(_DOM)
 	#2
-	css_tag_c = get_CSS_tag_content(_oDOM)
-	css_class_d = get_CSS_class_def(class_str, css_tag_c)
-	css_rules  = get_CSS_rules(css_class_d)
-	css_tag = css_rules
+	class_name = _node["class"].to_str
 	#3
-	css_data = css_att.to_s + ";" + css_tag.to_s
-	puts css_data
+	css_data_arr = css_data.scan(/p.MsoBodyText[\w|\W]+?\}/)
+		# here (above line) must be used class_name in regex
+		# css_data is an array
+	#4
+        tag_css_str = get_CSS_centralized(arr_to_str(css_data_arr))
+	#5
+	att_css_str =  _node['style']
+	puts "In get_CSS: \n Inline css rules: \n" + att_css_str
+        char = gets
 
+	#6
+	css_str = att_css_str+ tag_css_str 
 end
-def get_CSS_class_def(_class_name, _css_data)
-	css_def=_css_data.scan(/p.MsoBodyText[\w|\W]+?\}/).to_s
-        css_def
+def get_CSS_centralized(_cssClass_str)
+	css_rules_arr  = _cssClass_str.scan(/\{[\w|\W]+\}/)# works
+	css_rules_str = arr_to_str(css_rules_arr).delete "{}\n\r\t"
+	puts "In get_CSS_rules: \n node's dedicated css rules: \n" + css_rules_str
+	ch = gets
+	css_rules_str
 end
-def get_CSS_rules(_css_class)
-	css_rules=_css_class.scan(/\{[\w|\W]+\}/)
-        css_rules
-
+def arr_to_str(_arr)
+	str = ""
+	_arr.each() do |el|
+		str=str+el.to_s
+	end
+	str
 end
-def get_CSS_tag_content(_oDOM)
+def get_CSS_style_tag(_oDOM)
 # returns css data found in <style> tag's value
 
         style_nodes=_oDOM.xpath("/html//style")
         css_str= style_nodes[0].content	
 
 end
-def get_CSS_att_val(_node)
+def get_CSS_style_att(_node)
 # uses nokogiri-styles, simple inline css parser
 # returns inline css data found in @style attribute's value
 	style_inline = _node['style'].to_str
@@ -237,7 +259,7 @@ oDOM = Nokogiri::HTML(html_data)
 
 tag_set = oDOM.xpath("/html/body/div[4]/p[5]")
 node=tag_set[0]
-get_CSS_data(node, oDOM)
+get_CSS_prop_val("margin-left", node, oDOM)
 
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
