@@ -101,7 +101,7 @@ def getLine(_token, _index)
 	html_str = _token.inner_html
 	#<debug>
 	puts "\n***\nInside getLine\n"
-	puts "\ntokens inner html:\n" + html_str
+	puts "\ntokens inner html:\n" + put_html(html_str)
 	char = gets
 	#</debug>
 	#3.
