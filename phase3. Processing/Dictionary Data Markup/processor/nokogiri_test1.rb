@@ -86,26 +86,34 @@ def getLine(_token, _index)
 	end 
 	#2.
 	html_str = _token.inner_html
-	puts "\ninside getLine\n"
-	puts "***tokens inner html:\n" + html_str
+	#<debug>
+	puts "\n***\nInside getLine\n"
+	puts "\ntokens inner html:\n" + html_str
 	char = gets
+	#</debug>
+	#3.
 	lines_arr = html_str.split("<br>")
-	puts "\nlines:\n"
+	#<debug>
+	puts "\n\t---\nLines retrieved:\n"
+	counter=0
 	lines_arr.each() do |el|
-	 puts el + "\n"
+		puts "\nLine at " + counter.to_s + ":\n" + el + "\n"
+		counter=counter+1
 	end
+	#</debug>
 	char = gets
+	#4.
 	lines_arr[_index]
 end
 #-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
 	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
 	node = entry_tokens[0]
-	#line=	getLine(node, 1)
+	line=	getLine(node, 1)
 	line_count = insertLineBreaks(node)
 	puts "\ninside test_getLine\n"
 	puts "Lines number:\t" + line_count.to_s
-	
+	puts "Line at index:" + line'
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
