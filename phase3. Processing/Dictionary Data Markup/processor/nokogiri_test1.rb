@@ -36,14 +36,10 @@ def test_evalXPath(_oDOM)
 end
 #***********************************************************************************
 def put_html(_html_str)
-# Status: Failure
+# Status: Better
+# ToDo: Try to match not only tag's first characters but all generic id valid chars
 	pattern = "span"
-       # _html_str.gsub!(/<[\w]+?>/,"\n"+pattern)
-	offset = _html_str=~/<span/
-	_html_str.insert offset, "\nHeeeeey1111111"
-        offset = _html_str=~/<span/
-        _html_str.insert offset, "\nHeeeeey22222"
-
+	_html_str.gsub!(/<\w/) { "\n#{$&}" }
 
 end
 def insertLineBreaks(_token)
