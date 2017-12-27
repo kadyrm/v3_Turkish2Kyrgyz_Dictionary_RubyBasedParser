@@ -35,6 +35,11 @@ def test_evalXPath(_oDOM)
 	# end			
 end
 #***********************************************************************************
+def put_html(_str)
+	pattern = "span"
+        html_str.gsub!(/#{Regexp.escape(pattern)}/,"\n"+pattern)
+
+end
 def insertLineBreaks(_token)
 # Description: inserts line breaks and returns the number of inserted line breaks
 # Assumption: at least one line exists in a token
