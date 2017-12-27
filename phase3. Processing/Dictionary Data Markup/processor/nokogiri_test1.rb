@@ -1,6 +1,9 @@
 require 'nokogiri'
 require 'open-uri'
 #**********************************************************************
+# General issue of writing to the file
+# Git: src_file_utf8 branch; commit baf1a49106324a39b33977e54dcdf445ed80bf6b
+#	tag: proc_iss_1
 def fileIO_issue_fix(_oDOM)
 	file_content=_oDOM.to_html
 	if ! file_content.valid_encoding?
@@ -19,6 +22,7 @@ def fileIO_issue_fix(_oDOM)
 end
 
 #**************************************************************************
+# Git: branch: XPathLearning
 def evalXPath(_current, _XPath)
 	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
 	output = @doc.xpath(_XPath)
@@ -35,6 +39,8 @@ def test_evalXPath(_oDOM)
 	# end			
 end
 #***********************************************************************************
+# Git:  getLine branch
+#
 def put_html(_html_str)
 # Status: Better
 # ToDo: Try to match not only tag's first characters but all generic id valid chars
@@ -112,7 +118,6 @@ def getLine(_token, _index)
 	#4.
 	lines_arr[_index]
 end
-#-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
 	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
 	node = entry_tokens[0]
@@ -122,6 +127,8 @@ def test_getLine(_oDOM)
 	puts "Lines number:\t" + line_count.to_s
 	puts "Line at index:" + line
 end
+
+
 #***********************************************************************************
 def DelimitLines(oDOM)
 x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
