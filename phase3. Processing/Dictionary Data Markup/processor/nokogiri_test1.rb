@@ -44,13 +44,19 @@ def insertLineBreaks(_token)
 #	3. else retrieve spans with css style = color:red
 #	4. insert after eahc such an element breaking markup
 #	5. return the number of inserted line breaks
-	breaks_s = _token.xpath(".//br")
-	if breaks_s.count ==0
+	
+
+	#1.
+	breaks_s = _token.xpath(".//br")	
+	if breaks_s.count != 0
+	#2.
 		breaks_s.count	
+	#3.
 	else
 		eol_s = _token.xpath(".//span[@style=\"color:red\"]")
 		puts "inside insertLineBreaks\n"
-	        eol_s.each() do |eol|
+	#4.
+		eol_s.each() do |eol|
 			puts "next sibling before:\n" + eol.next_sibling.to_html
         	        eol.add_next_sibling "<br>"
 			puts "next sibling after:\n" + eol.next_sibling.to_html
@@ -61,6 +67,7 @@ def insertLineBreaks(_token)
 		eol_s.each() do |eol|
 			puts eol.to_html + "\n"
 		end	
+	#5.
 		eol_s.count
 	end
 end
@@ -93,10 +100,11 @@ end
 #-----------------------------------------------------------------++++
 def test_getLine(_oDOM)
 	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
-	line=	getLine(entry_tokens[0], 1)
-	line_count = insert
+	node = entry_tokens[0]
+	#line=	getLine(node, 1)
+	line_count = insertLineBreaks(node)
 	puts "\ninside test_getLine\n"
-	puts "Lines number:\t" + 
+	puts "Lines number:\t" + line_count.to_s
 	
 end
 #***********************************************************************************
