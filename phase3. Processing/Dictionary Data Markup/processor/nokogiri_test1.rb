@@ -35,12 +35,6 @@ def test_evalXPath(_oDOM)
 	# end			
 end
 #***********************************************************************************
-def put_html(_html_str)
-# Status: Failure
-	pattern = "span"
-        _html_str.gsub!(/<[\w]+?>/,"\n"+pattern)
-
-end
 def insertLineBreaks(_token)
 # Description: inserts line breaks and returns the number of inserted line breaks
 # Assumption: at least one line exists in a token
@@ -94,7 +88,7 @@ def getLine(_token, _index)
 	html_str = _token.inner_html
 	#<debug>
 	puts "\n***\nInside getLine\n"
-	puts "\ntokens inner html:\n" + put_html(html_str)
+	puts "\ntokens inner html:\n" + html_str
 	char = gets
 	#</debug>
 	#3.
@@ -119,7 +113,7 @@ def test_getLine(_oDOM)
 	line_count = insertLineBreaks(node)
 	puts "\ninside test_getLine\n"
 	puts "Lines number:\t" + line_count.to_s
-	puts "Line at index:" + line'
+	puts "Line at index:" + line
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
