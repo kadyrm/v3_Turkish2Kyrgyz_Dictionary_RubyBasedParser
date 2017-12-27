@@ -113,7 +113,7 @@ def test_getLine(_oDOM)
 	line_count = insertLineBreaks(node)
 	puts "\ninside test_getLine\n"
 	puts "Lines number:\t" + line_count.to_s
-	puts "Line at index:" + line'
+	puts "Line at index:" + line
 end
 #***********************************************************************************
 def DelimitLines(oDOM)
