@@ -123,7 +123,7 @@ def insertLineBreaks(_token)
 		char = gets
 	#4.
 		eol_s.each() do |eol|
-			if eol==nil
+			if eol.next_sibling.nil?
 				puts "nil has been found"	
 				char = gets
 				next 
