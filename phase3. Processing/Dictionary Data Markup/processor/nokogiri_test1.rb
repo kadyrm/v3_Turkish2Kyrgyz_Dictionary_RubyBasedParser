@@ -105,7 +105,7 @@ def insertLineBreaks(_token)
 	#1.
 	breaks_s = _token.xpath(".//br")	
 	#2.
-	if breaks_s.count != 0
+	if breaks_s.count <1
 		breaks_s.count	
 		puts "\n\t***\nInside insertLineBreaks\n" + "it seems lines breaks already have been inserted\n" + breaks_s.count.to_s + " has been found."
                 char = gets
