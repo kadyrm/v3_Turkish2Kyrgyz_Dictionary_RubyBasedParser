@@ -200,6 +200,7 @@ end
 
 	MarkupDictData(oDOM)
 	ColumnsMarkup(oDOM)
+	enable_style_tag(oDOM)
 	oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 	# end
 	# output 
