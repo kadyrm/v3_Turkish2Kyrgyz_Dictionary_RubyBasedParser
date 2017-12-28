@@ -53,6 +53,7 @@ def test_redundant_nesting_fix(_oDOM)
 	untag_dummy(node, "span")
 end
 #**********************************************************************
+# Goal: Ensure correct encoding and rendering of characters
 def enable_style_tag(_oDOM)
         node = _oDOM.at_xpath("/html/head/style")
         s=node.inner_html.to_s
@@ -68,6 +69,8 @@ def enable_style_tag(_oDOM)
 end
 
 def fileIO_issue_fix(_oDOM)
+# actually this is not used. All we need is to save input files as 
+# unicode UTF-8 and change encoding
 	file_content=_oDOM.to_html
 	if ! file_content.valid_encoding?
 		s = file_content.encode("UTF-16be", :invalid=>:replace, :replace=>"?").encode('UTF-8')
@@ -220,7 +223,9 @@ end
 #==========================================================================
 
 ######################################################################
-def normalize()
+def normalize(_DOM)
+	
+
 end
 def process(_DOM)
 	enable_style_tag(_DOM)
