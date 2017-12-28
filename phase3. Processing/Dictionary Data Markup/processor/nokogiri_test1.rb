@@ -44,13 +44,136 @@ def nested_spans_fix(_token)
 		node['class'] = "blank"
 		puts "nested span fix performed:"
 		puts _token.css_path.to_s + node.path.to_s
-	end
 end
-
 def test_redundant_nesting_fix(_oDOM)
 	node_set = _oDOM.xpath("/html/body/div[4]/p[5]")
 	node= node_set[0]
 	untag_dummy(node, "span")
+end
+#**************************************************************************
+# Git: branch: XPathLearning
+def evalXPath(_current, _XPath)
+	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
+	output = @doc.xpath(_XPath)
+
+end
+
+def test_evalXPath(_oDOM)
+	# some testing	
+	curr_node = _oDOM.xpath("/html/body/div[4]/p[5]")
+	nodes = evalXPath(curr_node, ".//node()[@style=\"color:red\"][1]/preceding::text()")
+	puts nodes.to_s
+	puts nodes.to_s.length
+
+	# end			
+end
+#--------------------------------------------------------------------
+def test_evalXPath(_oDOM)
+	# some testing	
+	curr_node = _oDOM.xpath("/html/body/div[4]/p[5]")
+	nodes = evalXPath(curr_node, ".//node()[@style=\"color:red\"][1]/preceding::text()")
+	puts nodes.to_s
+	puts nodes.to_s.length
+
+	# end			
+end
+#***********************************************************************************
+# Git:  getLine branch
+#
+def put_html(_html_str)
+# Status: Better
+# ToDo: Try to match not only tag's first characters but all generic id valid chars
+	pattern = "span"
+	_html_str.gsub!(/<\w/) { "\n#{$&}" }
+
+end
+def insertLineBreaks(_token)
+# Description: inserts line breaks and returns the number of inserted line breaks
+# Assumption: at least one line exists in a token
+# Algorithm:
+#	1. checkout if there are not breaks already inserted
+#	2. if so simply return lines count
+#	3. else retrieve spans with css style = color:red
+#	4. insert after eahc such an element breaking markup
+#	5. return the number of inserted line breaks
+	
+
+	#1.
+	breaks_s = _token.xpath(".//br")	
+	if breaks_s.count != 0
+	#2.
+		breaks_s.count	
+	#3.
+	else
+		eol_s = _token.xpath(".//span[@style=\"color:red\"]")
+		puts "inside insertLineBreaks\n"
+	#4.
+		eol_s.each() do |eol|
+			puts "next sibling before:\n" + eol.next_sibling.to_html
+        	        eol.add_next_sibling "<br>"
+			puts "next sibling after:\n" + eol.next_sibling.to_html
+        	end
+		puts "html code output:\n" + _token.to_html
+		char = gets
+		puts "eol elements refs after modification:\n"
+		eol_s.each() do |eol|
+			puts eol.to_html + "\n"
+		end	
+	#5.
+		eol_s.count
+	end
+end
+def getLine(_token, _index)
+# Algorithm:
+#	1. There must be <br> elements inserted in the token's html
+#		otherwise do it
+#	2. Get inner html of the token
+#	3. Split the html code as a string delimited by <br>
+#	4. Return a piece at the shown index
+
+	#1
+	breaks_s = _token.xpath(".//br")
+	if breaks_s.count == 0
+		insertLineBreaks(_token)
+	end 
+	#2.
+	html_str = _token.inner_html
+	#<debug>
+	puts "\n***\nInside getLine\n"
+	puts "\ntokens inner html:\n" + put_html(html_str)
+	char = gets
+	#</debug>
+	#3.
+	lines_arr = html_str.split("<br>")
+	#<debug>
+	puts "\n\t---\nLines retrieved:\n"
+	counter=0
+	lines_arr.each() do |el|
+		puts "\nLine at " + counter.to_s + ":\n" + el + "\n"
+		counter=counter+1
+	end
+	#</debug>
+	char = gets
+	#4.
+	lines_arr[_index]
+end
+def test_getLine(_oDOM)
+	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
+	node = entry_tokens[0]
+	line=	getLine(node, 1)
+	line_count = insertLineBreaks(node)
+	puts "\ninside test_getLine\n"
+	puts "Lines number:\t" + line_count.to_s
+	puts "Line at index:" + line
+end
+
+def DelimitLines(oDOM)
+        x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
+	counter = 0
+	        x_element.each() do |i|
+		        i.add_next_sibling "<br>"
+	        end
+	puts "Lines Marked Up: " + counter.to_s
 end
 #**********************************************************************
 # Goal: Ensure correct encoding and rendering of characters
@@ -69,6 +192,9 @@ def enable_style_tag(_oDOM)
 end
 
 def fileIO_issue_fix(_oDOM)
+# General issue of writing to the file
+# Git: src_file_utf8 branch; commit baf1a49106324a39b33977e54dcdf445ed80bf6b
+#	tag: proc_iss_1
 # actually this is not used. All we need is to save input files as 
 # unicode UTF-8 and change encoding
 	file_content=_oDOM.to_html
@@ -88,49 +214,6 @@ def fileIO_issue_fix(_oDOM)
 end
 
 #**************************************************************************
-def evalXPath(_current, _XPath)
-	@doc = Nokogiri::HTML::DocumentFragment.parse _current.to_html
-	output = @doc.xpath(_XPath)
-
-end
-#--------------------------------------------------------------------
-def test_evalXPath(_oDOM)
-	# some testing	
-	curr_node = _oDOM.xpath("/html/body/div[4]/p[5]")
-	nodes = evalXPath(curr_node, ".//node()[@style=\"color:red\"][1]/preceding::text()")
-	puts nodes.to_s
-	puts nodes.to_s.length
-
-	# end			
-end
-#***********************************************************************************
-def getLine(_entry_token, _line_num)
-
-	line_markups = _entry_token.xpath(".//node()[@style=\"color:red\"]")
-	if _line_num==1	
-		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/preceding::text()")
-		puts "line selected:\t" + nodes.to_s
-		puts "line length:\t" + nodes.to_s.length.to_s
-	else
-		nodes = evalXPath(_entry_token, ".//node()[@style=\"color:red\"][1]/following::text()")
-		puts "line selected:\t" + nodes.to_s
-		puts "line length:\t" + nodes.to_s.length.to_s
-	end					
-end
-#-----------------------------------------------------------------++++
-def test_getLine(_oDOM)
-	entry_tokens = _oDOM.xpath("/html/body/div[4]/p[5]")
-	getLine(entry_tokens[0], 1)
-end
-#***********************************************************************************
-def DelimitLines(oDOM)
-        x_element = oDOM.xpath("/html/body/div/p/span[@style=\"color:red\"]")
-	counter = 0
-	        x_element.each() do |i|
-		        i.add_next_sibling "<br>"
-	        end
-	puts "Lines Marked Up: " + counter.to_s
-end
 #==========================================================================
 def MarkupDictData(oDOM)
 	x_element = oDOM.xpath("/html/body/div")
