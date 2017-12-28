@@ -44,6 +44,7 @@ def nested_spans_fix(_token)
 		node['class'] = "blank"
 		puts "nested span fix performed:"
 		puts _token.css_path.to_s + node.path.to_s
+	end
 end
 def test_redundant_nesting_fix(_oDOM)
 	node_set = _oDOM.xpath("/html/body/div[4]/p[5]")
