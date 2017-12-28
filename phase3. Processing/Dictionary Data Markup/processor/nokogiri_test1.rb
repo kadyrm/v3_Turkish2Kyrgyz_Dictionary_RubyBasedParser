@@ -48,8 +48,8 @@ def nested_spans_fix(_token)
 end
 def test_redundant_nesting_fix(_oDOM)
 	node_set = _oDOM.xpath("/html/body/div[4]")
-	node= node_set[0]
-	insertLineBreaks(node)
+	page= node_set[0]
+	insertLineBreaks_page(page)
 	untag_dummy(node, "span")
 end
 #**************************************************************************
@@ -89,6 +89,12 @@ def put_html(_html_str)
 	_html_str.gsub!(/<\w/) { "\n#{$&}" }
 
 end
+def insertLineBreaks_page(_page)
+	node_s = _page.xpath("./p")
+	node_s.each do |node|
+		insertLineBreaks(node)
+	end
+end
 def insertLineBreaks(_token)
 # Description: inserts line breaks and returns the number of inserted 
 #	line breaks. Checks if there hasn't been already insertion
@@ -105,7 +111,7 @@ def insertLineBreaks(_token)
 	#1.
 	breaks_s = _token.xpath(".//br")	
 	#2.
-	if breaks_s.count <1
+	if breaks_s.count !=0
 		breaks_s.count	
 		puts "\n\t***\nInside insertLineBreaks\n" + "it seems lines breaks already have been inserted\n" + breaks_s.count.to_s + " has been found."
                 char = gets
@@ -117,6 +123,11 @@ def insertLineBreaks(_token)
 		char = gets
 	#4.
 		eol_s.each() do |eol|
+			if eol==nil
+				puts "nil has been found"	
+				char = gets
+				next 
+			end
 			puts "next sibling before:\n" + eol.next_sibling.to_html
         	        eol.add_next_sibling "<br>"
 			puts "next sibling after:\n" + eol.next_sibling.to_html
@@ -125,6 +136,12 @@ def insertLineBreaks(_token)
 		char = gets
 		puts "eol elements refs after modification:\n"
 		eol_s.each() do |eol|
+			if eol==nil
+                                puts "nil has been found"
+                                char = gets
+                                next 
+                        end
+
 			puts eol.to_html + "\n"
 		end	
 	#5.
