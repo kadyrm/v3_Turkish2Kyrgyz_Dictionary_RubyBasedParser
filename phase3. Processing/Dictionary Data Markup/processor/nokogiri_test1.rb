@@ -47,8 +47,9 @@ def nested_spans_fix(_token)
 	end
 end
 def test_redundant_nesting_fix(_oDOM)
-	node_set = _oDOM.xpath("/html/body/div[4]/p[5]")
+	node_set = _oDOM.xpath("/html/body/div[4]")
 	node= node_set[0]
+	insertLineBreaks(node)
 	untag_dummy(node, "span")
 end
 #**************************************************************************
@@ -89,7 +90,9 @@ def put_html(_html_str)
 
 end
 def insertLineBreaks(_token)
-# Description: inserts line breaks and returns the number of inserted line breaks
+# Description: inserts line breaks and returns the number of inserted 
+#	line breaks. Checks if there hasn't been already insertion
+#	performed.
 # Assumption: at least one line exists in a token
 # Algorithm:
 #	1. checkout if there are not breaks already inserted
@@ -101,13 +104,17 @@ def insertLineBreaks(_token)
 
 	#1.
 	breaks_s = _token.xpath(".//br")	
-	if breaks_s.count != 0
 	#2.
+	if breaks_s.count != 0
 		breaks_s.count	
+		puts "\n\t***\nInside insertLineBreaks\n" + "it seems lines breaks already have been inserted\n" + breaks_s.count.to_s + " has been found."
+                char = gets
+
 	#3.
 	else
 		eol_s = _token.xpath(".//span[@style=\"color:red\"]")
 		puts "inside insertLineBreaks\n"
+		char = gets
 	#4.
 		eol_s.each() do |eol|
 			puts "next sibling before:\n" + eol.next_sibling.to_html
@@ -308,14 +315,18 @@ end
 
 ######################################################################
 def normalize(_DOM)
-	
+	node_set = _DOM.xpath("/html/body/div[4]/p")
+        node= node_set[5]
+
+        insertLineBreaks(node)
+        untag_dummy(node, "span")		
 
 end
 def process(_DOM)
 	enable_style_tag(_DOM)
 	MarkupDictData(_DOM)
         ColumnsMarkup(_DOM)
-
+	normalize(_DOM)
 end
 def testing(_DOM)
 	test_redundant_nesting_fix(_DOM)
