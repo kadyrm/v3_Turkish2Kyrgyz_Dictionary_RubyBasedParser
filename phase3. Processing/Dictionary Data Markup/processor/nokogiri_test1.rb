@@ -3,21 +3,39 @@ require 'open-uri'
 require 'nokogiri-styles'
 
 #**************************************************************************
-def enable_style_tag(_oDOM)
-	node = _oDOM.at_xpath("/html/head/style")
-	s=node.inner_html.to_s
-	s.delete("<![CDATA[")
-	# needs a further look
-	s.delete("\<\!--")
-	s.delete("\/* Font Definitions *\/")
-	s.delete("--\>")
-	s.delete("--\>")
-	s.delete("]]>")
-	node.inner_html = s
+# Goal: span element must contain only text nodes, 
+# if not so inner html should be moved out, i.e. untagged
+#
+def untag_dummy(_node, _tag_name)
+	#Algorithm:
+	#	1. Get inner html as string
+	#	2. remove all occurrences of start tag and end tag
+	#	3. assign processed html to the node
+
+	#1.
+	inner_html_str = _node.inner_html
+	#<debug>
+	puts "\n\t***\nInside untag_dummy"	
+	puts "\nhtml before processing:\n" + inner_html_str
+	char = gets
+	#</debug>
+	#2.
+	inner_html_str.gsub!(/(\<span(\w|\W)+?\>)|(\<\/span\>)/, "")
+	#<debug>
+        puts "\nhtml after substitution:\n" + inner_html_str
+	puts "\ncompare with the content of the node:\n" + _node.content
+        char = gets
+        #</debug>
+	#3.
+	_node.inner_html=inner_html_str
+	#<debug>
+        puts "\nhtml after processing:\n" + inner_html_str
+        char = gets
+        #</debug>
 
 end
+
 def nested_spans_fix(_token)
-# span element must contain only text nodes, if not so inner html should be moved out, i.e. untagged
 	node_set = _token.xpath(".//span[child::*]")
 	node_set.each() do |node|
 		nested = node.inner_html
@@ -27,17 +45,28 @@ def nested_spans_fix(_token)
 		puts "nested span fix performed:"
 		puts _token.css_path.to_s + node.path.to_s
 	end
-
 end
 
-def test_nested_spans_fix(_oDOM)
-	node_set = _oDOM.xpath("/html/body/div[4]")
-	nested_spans_fix(node_set[0])
-	nested_spans_fix(node_set[0])
-	enable_style_tag(_oDOM)
-	_oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
+def test_redundant_nesting_fix(_oDOM)
+	node_set = _oDOM.xpath("/html/body/div[4]/p[5]")
+	node= node_set[0]
+	untag_dummy(node, "span")
 end
 #**********************************************************************
+def enable_style_tag(_oDOM)
+        node = _oDOM.at_xpath("/html/head/style")
+        s=node.inner_html.to_s
+        s.delete("<![CDATA[")
+        # needs a further look
+        s.delete("\<\!--")
+        s.delete("\/* Font Definitions *\/")
+        s.delete("--\>")
+        s.delete("--\>")
+        s.delete("]]>")
+        node.inner_html = s
+
+end
+
 def fileIO_issue_fix(_oDOM)
 	file_content=_oDOM.to_html
 	if ! file_content.valid_encoding?
@@ -189,32 +218,31 @@ def ParsingOfAttrValues(_oDOM)
 
 end
 #==========================================================================
-# Main
-# creating io object
-html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 
-# creating DOM object from io object
-oDOM = Nokogiri::HTML(html_data)
+######################################################################
+def normalize()
+end
+def process(_DOM)
+	enable_style_tag(_DOM)
+	MarkupDictData(_DOM)
+        ColumnsMarkup(_DOM)
 
-#DelimitLines(oDOM)
-MarkupDictData(oDOM)
+end
+def testing(_DOM)
+	test_redundant_nesting_fix(_DOM)
 
-ColumnsMarkup(oDOM)
-#dicDataPages = oDOM.xpath("/html/body/div[@class = 'DictData']")
-#MarkupPageColumns(dicDataPages[0])
-#puts "\n NEXT PAGE GOES HERE========================================="
-#MarkupPageColumns(dicDataPages[11])
-
-
-
-
-
-	MarkupDictData(oDOM)
-	ColumnsMarkup(oDOM)
+end
+# MAIN FUNCTION
+	# input	
+	# creating input object
+	html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
+	# creating DOM object from input object
+	oDOM = Nokogiri::HTML(html_data)
+	# some testing
+	testing(oDOM)
+	#output
 	enable_style_tag(oDOM)
 	oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
-
-	# end
 
 
 ######################################################################
