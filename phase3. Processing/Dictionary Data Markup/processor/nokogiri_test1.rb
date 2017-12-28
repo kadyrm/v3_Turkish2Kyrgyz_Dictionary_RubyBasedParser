@@ -208,16 +208,12 @@ ColumnsMarkup(oDOM)
 
 
 
-# Output1: doesn't preserve turkish and kyrgyz specific letter
-oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
-# Output2: below doesn't preserve content text at all
-#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
+	MarkupDictData(oDOM)
+	ColumnsMarkup(oDOM)
+	enable_style_tag(oDOM)
+	oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
-
-
-	# output below doesn't preserve content text at all
-	#File.write('../output/write_html_to.html', oDOM.to_html(encoding: 'UTF-8'))
 	# end
 
 
