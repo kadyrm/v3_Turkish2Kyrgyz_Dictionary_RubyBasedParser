@@ -50,7 +50,7 @@ def test_redundant_nesting_fix(_oDOM)
 	node_set = _oDOM.xpath("/html/body/div[4]")
 	page= node_set[0]
 	insertLineBreaks_page(page)
-	untag_dummy(node, "span")
+	untag_dummy(page, "span")
 end
 #**************************************************************************
 # Git: branch: XPathLearning
@@ -113,37 +113,40 @@ def insertLineBreaks(_token)
 	#2.
 	if breaks_s.count !=0
 		breaks_s.count	
+		#<debug>
 		puts "\n\t***\nInside insertLineBreaks\n" + "it seems lines breaks already have been inserted\n" + breaks_s.count.to_s + " has been found."
-                char = gets
+                #char = gets
+		#</debug>
 
 	#3.
 	else
 		eol_s = _token.xpath(".//span[@style=\"color:red\"]")
+		#<debug>
 		puts "inside insertLineBreaks\n"
-		char = gets
+		#char = gets
+		#</debug>
 	#4.
 		eol_s.each() do |eol|
+			#<debug>
 			if eol.next_sibling.nil?
-				puts "nil has been found"	
-				char = gets
-				next 
+				puts "No next sibling before."	
+			else
+				puts "next sibling before:\n" + eol.next_sibling.to_html
 			end
-			puts "next sibling before:\n" + eol.next_sibling.to_html
+			#</debug>
         	        eol.add_next_sibling "<br>"
+			#<debug>
 			puts "next sibling after:\n" + eol.next_sibling.to_html
+			#</debug>
         	end
+		#<debug>
 		puts "html code output:\n" + _token.to_html
-		char = gets
+		#char = gets
 		puts "eol elements refs after modification:\n"
 		eol_s.each() do |eol|
-			if eol==nil
-                                puts "nil has been found"
-                                char = gets
-                                next 
-                        end
-
 			puts eol.to_html + "\n"
 		end	
+		#</debug>
 	#5.
 		eol_s.count
 	end
