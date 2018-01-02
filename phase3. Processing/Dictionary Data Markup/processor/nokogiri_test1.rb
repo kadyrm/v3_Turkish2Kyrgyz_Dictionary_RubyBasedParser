@@ -1,54 +1,8 @@
 require 'nokogiri'
 require 'open-uri'
 require 'nokogiri-styles'
-#----------------------------------------------------------------
-def get_CSS_prop_val(_prop_name, _node, _oDOM)
-	css_str = get_CSS_total(_node, _oDOM)
-	
-	puts "In get_CSS_prop_val: \n" + css_str
-end
-def get_CSS_total(_node, _DOM)
-# Summ: access both inline(from style att) and centralized(from style tag) css data
+require "./CSSParser.rb"
 
-	#1
-        centralized_css_str = get_CSS_centralized(_node, _DOM)
-	#2
-	inline_css_str =  get_CSS_inline(_node)
-
-	puts "In get_CSS: \n Inline css rules: \n" + inline_css_str
-        char = gets
-
-	css_str = inline_css_str+";" + centralized_css_str 
-end
-def get_CSS_inline(_node)
-	att_css_str =  _node['style']
-end
-def get_CSS_centralized(_node, _DOM)
-# Algorithm:
-# 1. get all centralized css data from the dedicated style tag
-# 2. get _node's class_name
-# 3. get only css relating to the node's class name
-# 4. get only css rules
-# 5. convert them to string data type and remove curly bracket and formatting chars
-        #1
-        css_data = get_CSS_style_tag(_DOM)
-        #2
-        class_name = _node["class"].to_str
-        #3
-        css_data_arr = css_data.scan(/p.MsoBodyText[\w|\W]+?\}/)
-                # here (above line) must be used class_name in regex
-                # css_data is an array
-        #4
-	css_data_str = arr_to_str(css_data_arr)
-	css_rules_arr  = css_data_str.scan(/\{[\w|\W]+\}/)# works
-	#5
-	css_rules_str = arr_to_str(css_rules_arr).delete "{}\n\r\t"
-
-
-	puts "In get_CSS_centralized: \n node's dedicated css rules: \n" + css_rules_str
-	ch = gets
-	css_rules_str
-end
 def arr_to_str(_arr)
 	str = ""
 	_arr.each() do |el|
@@ -56,19 +10,7 @@ def arr_to_str(_arr)
 	end
 	str
 end
-def get_CSS_style_tag(_oDOM)
-# returns css data found in <style> tag's value
 
-        style_nodes=_oDOM.xpath("/html//style")
-        css_str= style_nodes[0].content	
-
-end
-def get_CSS_style_att(_node)
-# uses nokogiri-styles, simple inline css parser
-# returns inline css data found in @style attribute's value
-	style_inline = _node['style'].to_str
-
-end
 #----------------------------------------------------------------
 #*******************************************************************
 def remove_blank_tags(_enter_point, _tag_name)
@@ -267,8 +209,9 @@ oDOM = Nokogiri::HTML(html_data)
 
 tag_set = oDOM.xpath("/html/body/div[4]/p[5]")
 node=tag_set[0]
-get_CSS_prop_val("margin-left", node, oDOM)
-
+MarkupDictData(oDOM)
+parser = 	CSSParser.new(node, oDOM)
+parser.get_rules()
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
