@@ -9,9 +9,49 @@ class CSSParser
 		@m_DOM=_DOM
 	end	 
 	def get_prop_val(_prop_name)
-		css_str = get_inline_rules()
+		# Description: Access css property value 
+		# regardless of its location(inline or centralized)
+		# Algorithm:
+		# => 0. Parse inline css
+		# => 1. Get inline property value
+		# => 2. If nothing was found
+		# => 3. then get centralized property value
 
-		puts "In get_CSS_prop_val: \n" + css_str
+		# 0.
+		@m_node['style']
+		# 1.
+		val = @m_node.styles[_prop_name]
+		if val == nil
+			val = get_centralized_prop_val(_prop_name)
+		end
+		#<debub>
+		puts "In get_CSS_prop_val: \n" + val.to_s
+		#</debug>
+		val.to_s
+	end
+	def get_centralized_prop_val(_prop_name)
+		# Description: Access css property value 
+		# from centralized css data store(i.e. <style> tag)
+		# Algorithm:
+		# => 1. temporarily save inline css rules
+		# => 2. assign centralized css rules enstead of inline
+		# => 3. parse using nokogiri-styles
+		# => 4. get property value
+		# => 5. restore inline css data
+		# => 6. return property value
+
+		# 1.
+		tmp = @m_node['style']
+		# 2.
+		@m_node['style'] = self.get_centralized_rules
+		# 3.
+		@m_node['style']			
+		# 4. 
+		val = @m_node.styles[_prop_name]
+		# 5.
+		@m_node['style'] = tmp
+		# 6.
+		val
 	end
 	def get_rules()
 		# Get CSS rules

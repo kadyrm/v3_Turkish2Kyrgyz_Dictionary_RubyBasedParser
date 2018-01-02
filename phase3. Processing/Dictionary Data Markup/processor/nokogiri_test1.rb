@@ -207,11 +207,12 @@ html_data = File.read('../input/Cumakunova_tr_kg[901-1000].htm')
 # creating DOM object from io object
 oDOM = Nokogiri::HTML(html_data)
 
-tag_set = oDOM.xpath("/html/body/div[4]/p[5]")
+tag_set = oDOM.xpath("/html/body/div[4]/p[6]")
 node=tag_set[0]
 MarkupDictData(oDOM)
 parser = 	CSSParser.new(node, oDOM)
 parser.get_rules()
+parser.get_prop_val("margin-left")
 # output below doesn't preserve turkish and kyrgyz specific letter
 oDOM.write_xhtml_to(File.new('../output/write_html_to.html', 'w'), :encoding => 'UTF-8')
 
