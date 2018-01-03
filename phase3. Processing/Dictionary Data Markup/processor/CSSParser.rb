@@ -16,7 +16,7 @@ class CSSParser
 		# => 1. Get inline property value
 		# => 2. If nothing was found
 		# => 3. then get centralized property value
-
+		puts "\n\t***\nIn get_prop_val\n"
 		# 0.
 		@m_node['style']
 		# 1.
@@ -25,7 +25,8 @@ class CSSParser
 			val = get_centralized_prop_val(_prop_name)
 		end
 		#<debub>
-		puts "In get_CSS_prop_val: \n" + val.to_s
+		puts "Property Name: " + _prop_name
+		puts "Property Value: \n" + val.to_s
 		#</debug>
 		val.to_s
 	end
@@ -53,10 +54,13 @@ class CSSParser
 		# 6.
 		val
 	end
+	def show_rules()
+
+
+	end
 	def get_rules()
-		# Get CSS rules
-		# Summ: access both inline(from style att) 
-		# and centralized(from style tag) css rules
+		# Access CSS rules both inline(from style att) 
+		# and centralized(from style tag)
 
 		#1
 		centralized_css_str = self.get_centralized_rules()
